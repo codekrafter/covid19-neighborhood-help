@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "926958898978",
+    "firebase_url": "https://covid-19-neighborhood-help.firebaseio.com",
+    "project_id": "covid-19-neighborhood-help",
+    "storage_bucket": "covid-19-neighborhood-help.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926958898978:android:bfffe6ea33f17822fcdf7b",
+        "android_client_info": {
+          "package_name": "net.codekraft.neighborhood_help"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926958898978-4k965gkmhu8ffpd2idg8aamilqvn459o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.codekraft.neighborhood_help",
+            "certificate_hash": "d4f208b1cfe065ecfa443f90be7287de5673f778"
+          }
+        },
+        {
+          "client_id": "926958898978-29bvuupo6gkalj5ig63e2u27ah43np87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEWMiimKtXU0-9m749Ej7t0SpsvIe8SM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926958898978-29bvuupo6gkalj5ig63e2u27ah43np87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
