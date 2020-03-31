@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
+import 'package:neighborhood_help/textfield.dart';
 
 import 'requestBg.dart';
 import 'request.dart';
@@ -74,6 +75,7 @@ class RequestPart1 extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 150, horizontal: 30),
                     child: Center(
                       child: Material(
+                        color: Colors.white,
                         elevation: 20,
                         borderRadius: BorderRadius.circular(15),
                         child: ListView(
@@ -81,11 +83,16 @@ class RequestPart1 extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           children: [
-                            TextField(
+                            /*TextField(
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                               ),
-                            )
+                            )*/
+                            CustomTextField(
+                              name: 'Your location',
+                              placeholder: 'City, postal code or address',
+                              isRequired: true,
+                            ),
                           ],
                         ),
                       ),

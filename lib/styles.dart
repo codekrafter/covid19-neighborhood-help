@@ -8,12 +8,18 @@ TextStyle get homeOptionStyle => TextStyle(
   fontSize: 22
 );
 
-Color get requestBlue => Colors.indigo[600];
+Color get whiteBackgroundColor => Color(0xFFECEEF3);
 
-Color get introGrey => Colors.grey[800];
+Color get requestBlue => Color(0xFF394BBB);
+
+Color get darkTextColor => Color(0xFF37383C);
+
+Color get backgroundWhite => Color(0xFFECEEF3);
+
+Color get inputBorderColor => Color(0xFFDDDDDD);
 
 TextStyle get introTextStyle => TextStyle(
-  color: introGrey,
+  color: darkTextColor,
   fontSize: 18.5
 );
 
@@ -37,4 +43,16 @@ TextStyle get titleStyle => TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w900,
   fontSize: 25,
+);
+
+TextStyle get textFieldNameStyle => TextStyle(
+  color: darkTextColor,
+  fontWeight: FontWeight.w800,
+  fontSize: 15
+);
+
+TextStyle get requiredMarkStyle => TextStyle(
+  color: Colors.red,
+  fontWeight: FontWeight.w800,
+  fontSize: 15
 );

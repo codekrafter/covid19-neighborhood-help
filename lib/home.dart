@@ -4,9 +4,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'styles.dart' as styles;
 import 'langSelect.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +56,7 @@ class HomePage extends StatelessWidget {
                 HomeSelection(
                   message: 'I need help',
                   image: SvgPicture.asset('assets/home/requester.svg'),
+                  imagePos: EdgeInsets.fromLTRB(14.9, null, null, 8),
                   onTap: () => Navigator.of(context).pushNamed('/request'),
                 ),
                 SizedBox(
@@ -53,7 +64,8 @@ class HomePage extends StatelessWidget {
                 ),
                 HomeSelection(
                   message: 'I want to help',
-                  image: SvgPicture.asset('assets/home/requester.svg'),
+                  image: SvgPicture.asset('assets/home/volunteer.svg'),
+                  imagePos: EdgeInsets.fromLTRB(14.9, null, null, 17),
                   onTap: () => Navigator.of(context).pushNamed('/volunteer'),
                 ),
               ],
@@ -66,14 +78,17 @@ class HomePage extends StatelessWidget {
 }
 
 class HomeSelection extends StatelessWidget {
-  const HomeSelection({@required this.message, @required this.image, this.onTap, Key key})
+  const HomeSelection(
+      {@required this.message, @required this.image, @required this.imagePos, this.onTap, Key key})
       : assert(message != null),
         assert(image != null),
+        assert(imagePos != null),
         super(key: key);
 
   final String message;
   final SvgPicture image;
   final Function onTap;
+  final EdgeInsets imagePos;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +107,7 @@ class HomeSelection extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(width: 110, height: 75),
+                  SizedBox(width: 95, height: 75),
                   Text(
                     message,
                     style: styles.homeOptionStyle,
@@ -112,8 +127,10 @@ class HomeSelection extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 8,
-          left: 20,
+          left: imagePos.left,
+          top: imagePos.top,
+          right: imagePos.right,
+          bottom: imagePos.bottom,
           child: image,
         ),
       ],

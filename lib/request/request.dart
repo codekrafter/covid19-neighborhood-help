@@ -14,7 +14,7 @@ class RequestModel extends ChangeNotifier {
     RequestIntro(),
     RequestPart1(),
     RequestPart2(),
-    RequestPart3()
+    RequestPart3(),
   ];
 
   Widget getCurrentPart() => _currentPart;

@@ -19,8 +19,10 @@ class RequestBackground extends StatelessWidget {
       right: 0,
       child: Center(
         child: CustomPaint(
-          child: Container(),
-          painter: RequestBackgroundPainter(context),
+          child: Container(
+            color: styles.backgroundWhite
+          ),
+          foregroundPainter: RequestBackgroundPainter(context),
         ),
       ),
     );
