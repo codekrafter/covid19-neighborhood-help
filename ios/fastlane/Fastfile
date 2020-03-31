@@ -19,7 +19,7 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     disable_automatic_code_signing(path: "Runner.xcodeproj")
-    match(type: "appstore", readonly: false)
+    match(type: "appstore", readonly: true, git_url: "git@github.com:codekrafter/match.git")
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight
     disable_automatic_code_signing(path: "Runner.xcodeproj")

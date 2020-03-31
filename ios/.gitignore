@@ -40,3 +40,4 @@ Runner/GeneratedPluginRegistrant.*
 *.ipa
 *.dSYM.zip
 *.dSYM
+*/report.xml
