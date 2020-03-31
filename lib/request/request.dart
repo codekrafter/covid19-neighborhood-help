@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:neighborhood_help/styles.dart' as styles;
 
 import 'intro.dart';
 import 'part1.dart';
@@ -54,16 +55,55 @@ class _RequestPageState extends State<RequestPage> {
         child: Builder(
           builder: (context) => AnimatedSwitcher(
             duration: Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) => SlideTransition(
+            /*transitionBuilder: (child, animation) => SlideTransition(
               position: animation.drive(
                 Tween(begin: Offset(1, 0), end: Offset.zero),
               ),
               child: child,
-            ),
+            ),*/
             child: Provider.of<RequestModel>(context).getCurrentPart(),
           ),
         ),
       ),
     );
   }
+}
+
+class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const RequestStepAppBar({@required this.currentStep, this.totalSteps = '3', Key key})
+      : assert(currentStep != null),
+        assert(totalSteps != null),
+        super(key: key);
+
+  final String currentStep;
+  final String totalSteps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: styles.requestBlue,
+      child: Consumer<RequestModel>(
+        builder: (context, model, child) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Row(children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 23,
+              ),
+              onPressed: () => model.previousPart(),
+            ),
+            Text(
+              'Step $currentStep of $totalSteps',
+              style: styles.stepHeaderStyle,
+            )
+          ]),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(100);
 }
