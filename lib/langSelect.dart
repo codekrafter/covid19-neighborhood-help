@@ -6,7 +6,6 @@ class LanguageSelect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(Localizations.localeOf(context).countryCode);
     return Row(
       children: [
         Flags.getMiniFlag(Localizations.localeOf(context).countryCode.toUpperCase(), null, null),

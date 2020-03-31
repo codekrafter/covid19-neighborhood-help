@@ -26,6 +26,7 @@ dependencies:
   flutter_svg: any
   flag: any
   provider: any
+  country_pickers: any
 
 dev_dependencies:
   flutter_test:
