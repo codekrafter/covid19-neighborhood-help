@@ -88,25 +88,27 @@ class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: styles.requestBlue,
-      child: Consumer<RequestModel>(
-        builder: (context, model, child) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Row(children: [
-            IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 23,
+    return SafeArea(
+          child: Container(
+        color: styles.requestBlue,
+        child: Consumer<RequestModel>(
+          builder: (context, model, child) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Row(children: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 23,
+                ),
+                onPressed: () => model.previousPart(),
               ),
-              onPressed: () => model.previousPart(),
-            ),
-            Text(
-              'Step $currentStep of $totalSteps',
-              style: styles.stepHeaderStyle,
-            )
-          ]),
+              Text(
+                'Step $currentStep of $totalSteps',
+                style: styles.stepHeaderStyle,
+              )
+            ]),
+          ),
         ),
       ),
     );
