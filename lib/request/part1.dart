@@ -14,10 +14,9 @@ class RequestPart1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: styles.requestBlue,
-        statusBarBrightness: Brightness.dark,
-        statusBarIconBrightness: Brightness.light
-      ),
+          statusBarColor: styles.requestBlue,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light),
       child: SafeArea(
         child: Scaffold(
           appBar: RequestStepAppBar(
@@ -79,11 +78,9 @@ class RequestPart1 extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 30),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 150, horizontal: 30),
+                        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
                         child: Center(
                           child: Material(
                             color: Colors.white,
@@ -104,19 +101,40 @@ class RequestPart1 extends StatelessWidget {
                                   placeholder: 'City, postal code or address',
                                   isRequired: true,
                                 ),
+                                SizedBox(height: 30),
                                 CustomTextField(
                                   name: 'Message Request',
-                                  placeholder: 'City, postal code or address',
+                                  placeholder: '"I need help with my groceries"',
                                   isRequired: false,
                                   keyboardType: TextInputType.multiline,
-                                  maxLines: 4,
+                                  maxLines: 5,
+                                ),
+                                SizedBox(height: 30),
+                                Column(
+                                  children: <Widget>[
+                                    ListTile(
+                                      title: const Text('Lafayette'),
+                                      leading: Radio(
+                                        value: 'value1',
+                                        groupValue: 'value1',
+                                        onChanged: (val) {},
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: const Text('Thomas Jefferson'),
+                                      leading: Radio(
+                                          value: 'value',
+                                          groupValue: 'value1',
+                                          onChanged: (val) {}),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 30)
+                      SizedBox(height: 100)
                     ],
                   ),
                 ),

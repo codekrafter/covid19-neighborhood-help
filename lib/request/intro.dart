@@ -12,12 +12,13 @@ class RequestIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
+        statusBarColor: styles.backgroundWhite,
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark
       ),
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: styles.backgroundWhite,
           appBar: IntroAppBar(),
           body: Center(
             child: Column(

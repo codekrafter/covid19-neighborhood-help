@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'styles.dart' as styles;
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   const CustomTextField(
       {@required this.placeholder,
       @required this.name,
@@ -10,6 +10,8 @@ class CustomTextField extends StatelessWidget {
       this.keyboardType = TextInputType.text,
       this.minLines,
       this.maxLines,
+      this.onEditingCompleted,
+      this.initialValue,
       Key key})
       : assert(placeholder != null),
         assert(name != null),
@@ -23,6 +25,22 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final int minLines;
   final int maxLines;
+  final Function(String) onEditingCompleted;
+  final String initialValue;
+
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  String _currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _currentValue = widget.initialValue != null ? widget.initialValue : "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +50,8 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-          text: TextSpan(text: name, style: styles.textFieldNameStyle, children: [
-            if (isRequired) TextSpan(text: ' *', style: styles.requiredMarkStyle),
+          text: TextSpan(text: widget.name, style: styles.textFieldNameStyle, children: [
+            if (widget.isRequired) TextSpan(text: ' *', style: styles.requiredMarkStyle),
           ]),
         ),
         SizedBox(height: 10),
@@ -43,13 +61,19 @@ class CustomTextField extends StatelessWidget {
             decoration: InputDecoration(
               border: normalBorder,
               enabledBorder: normalBorder,
-              hintText: placeholder,
+              focusedBorder:
+                  normalBorder.copyWith(borderSide: BorderSide(color: styles.requestBlue)),
+              hintText: widget.placeholder,
               hintStyle: TextStyle(color: styles.inputBorderColor),
-              contentPadding: EdgeInsets.fromLTRB(15, 3, 3, 3),
+              contentPadding: EdgeInsets.fromLTRB(
+                  15, 5, 3, (widget.keyboardType == TextInputType.multiline) ? 10 : 3),
             ),
-            keyboardType: keyboardType,
-            minLines: minLines,
-            maxLines: maxLines,
+            cursorColor: styles.requestBlue,
+            keyboardType: widget.keyboardType,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
+            onChanged: (val) => _currentValue = val,
+            onEditingComplete: () => widget.onEditingCompleted(_currentValue),
           ),
         ),
       ],

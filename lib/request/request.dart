@@ -11,6 +11,11 @@ class RequestModel extends ChangeNotifier {
   Widget _currentPart = _partsMap[0];
   int _currentPartIndex = 0;
 
+  // Members just used for form fields, so no need to have a rich setter
+  String location;
+  String message;
+  String urgency;
+
   static const List<Widget> _partsMap = [
     RequestIntro(),
     RequestPart1(),
@@ -50,18 +55,21 @@ class _RequestPageState extends State<RequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChangeNotifierProvider<RequestModel>(
-        create: (context) => RequestModel(),
-        child: Builder(
-          builder: (context) => AnimatedSwitcher(
-            duration: Duration(milliseconds: 200),
-            /*transitionBuilder: (child, animation) => SlideTransition(
-              position: animation.drive(
-                Tween(begin: Offset(1, 0), end: Offset.zero),
-              ),
-              child: child,
-            ),*/
-            child: Provider.of<RequestModel>(context).getCurrentPart(),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()), // On tap close any keyboards
+        child: ChangeNotifierProvider<RequestModel>(
+          create: (context) => RequestModel(),
+          child: Builder(
+            builder: (context) => AnimatedSwitcher(
+              duration: Duration(milliseconds: 500),
+              /*transitionBuilder: (child, animation) => SlideTransition(
+                position: animation.drive(
+                  Tween(begin: Offset(1, 0), end: Offset.zero),
+                ),
+                child: child,
+              ),*/
+              child: Provider.of<RequestModel>(context).getCurrentPart(),
+            ),
           ),
         ),
       ),
