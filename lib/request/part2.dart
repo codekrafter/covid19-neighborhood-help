@@ -150,7 +150,7 @@ class RequestPart2 extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 100) // Marking page dirty
+                    SizedBox(height: 100)
                   ],
                 ),
               ),
