@@ -93,6 +93,13 @@ class RequestPart1 extends StatelessWidget {
                               placeholder: 'City, postal code or address',
                               isRequired: true,
                             ),
+                            CustomTextField(
+                              name: 'Message Request',
+                              placeholder: 'City, postal code or address',
+                              isRequired: false,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 4,
+                            ),
                           ],
                         ),
                       ),

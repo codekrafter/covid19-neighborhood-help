@@ -54,9 +54,9 @@ class RequestBackgroundPainter extends CustomPainter {
         paint);
 
     canvas.drawRect(
-        Rect.fromPoints(size.topLeft(Offset.zero), size.centerRight(Offset(0, size.height * -0.19))), paint);
+        Rect.fromPoints(size.topLeft(Offset.zero), size.topRight(Offset(0, 155))), paint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

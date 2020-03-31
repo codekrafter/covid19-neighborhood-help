@@ -38,9 +38,14 @@ class RequestModel extends ChangeNotifier {
   }
 }
 
-class RequestPage extends StatelessWidget {
+class RequestPage extends StatefulWidget {
   RequestPage({Key key}) : super(key: key);
 
+  @override
+  _RequestPageState createState() => _RequestPageState();
+}
+
+class _RequestPageState extends State<RequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
