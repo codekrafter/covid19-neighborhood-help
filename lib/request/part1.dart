@@ -50,9 +50,6 @@ class RequestPart1 extends StatelessWidget {
                           )
                         ]),
                       ),*/
-                    SizedBox(
-                      height: 10,
-                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                       child: Column(
@@ -96,35 +93,67 @@ class RequestPart1 extends StatelessWidget {
                                   ),
                                 )*/
                               CustomTextField(
-                                name: 'Your location',
-                                placeholder: 'City, postal code or address',
+                                name: 'Your name',
+                                placeholder: 'INSERT HINT HERE',
                                 isRequired: true,
+                                initialValue: model.location,
+                                onEditingCompleted: (value) => model.location = value,
                               ),
                               SizedBox(height: 30),
-                              CustomTextField(
-                                name: 'Message Request',
-                                placeholder: '"I need help with my groceries"',
-                                isRequired: false,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 5,
-                              ),
-                              SizedBox(height: 30),
+                              // Pretty much useless to add a column in a column but I added it anyways for abstraction
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  ListTile(
-                                    title: const Text('Lafayette'),
-                                    leading: Radio(
-                                      value: 'value1',
-                                      groupValue: 'value1',
-                                      onChanged: (val) {},
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Contact Method',
+                                      style: styles.textFieldNameStyle,
+                                      children: [
+                                        TextSpan(text: ' *', style: styles.requiredMarkStyle),
+                                      ],
                                     ),
                                   ),
-                                  ListTile(
-                                    title: const Text('Thomas Jefferson'),
-                                    leading: Radio(
-                                        value: 'value', groupValue: 'value1', onChanged: (val) {}),
+                                  RadioRow(
+                                    label: 'Phone',
+                                    value: 'phone',
+                                    groupValue: model.getContactMethod(),
+                                    onChanged: (val) => model.setContactMethod(val),
+                                  ),
+                                  RadioRow(
+                                    label: 'Email',
+                                    value: 'email',
+                                    groupValue: model.getContactMethod(),
+                                    onChanged: (val) => model.setContactMethod(val),
                                   ),
                                 ],
+                              ),
+                              SizedBox(height: 30),
+                              PhoneNumberField(
+                                countryCode: model.getCountryCode(),
+                                onSelected: (country) => model.setCountryCode(country.phoneCode),
+                              ),
+                              SizedBox(height: 30),
+                              RaisedButton(
+                                onPressed: () => model.nextPart(),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    SizedBox(width: 70),
+                                    Text('Next Step', style: styles.introNextStyle.copyWith(color: Colors.white)),
+                                    SizedBox(width: 70),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      size: 25,
+                                      color: Colors.white,
+                                    )
+                                  ],
+                                ),
+                                color: styles.requestBlue,
+                                elevation: 0,
+                                padding: const EdgeInsets.all(16.0),
+                                shape:
+                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                             ],
                           ),

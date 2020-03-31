@@ -12,9 +12,32 @@ class RequestModel extends ChangeNotifier {
   int _currentPartIndex = 0;
 
   // Members just used for form fields, so no need to have a rich setter
+  String name;
+  String email;
+  int phone;
   String location;
   String message;
   String urgency;
+
+  // Form field values that need rich interaction
+  String _contactMethod = "";
+  String _countryCode = '1';
+
+  String getContactMethod() => _contactMethod;
+
+  void setContactMethod(String newValue) {
+    _contactMethod = newValue;
+
+    notifyListeners();
+  }
+
+  String getCountryCode() => _countryCode;
+
+  void setCountryCode(String newValue) {
+    _countryCode = newValue;
+    print('new country code: $newValue');
+    notifyListeners();
+  }
 
   static const List<Widget> _partsMap = [
     RequestIntro(),
@@ -61,7 +84,7 @@ class _RequestPageState extends State<RequestPage> {
           create: (context) => RequestModel(),
           child: Builder(
             builder: (context) => AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
+              duration: Duration(milliseconds: 400),
               /*transitionBuilder: (child, animation) => SlideTransition(
                 position: animation.drive(
                   Tween(begin: Offset(1, 0), end: Offset.zero),
@@ -89,7 +112,7 @@ class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-          child: Container(
+      child: Container(
         color: styles.requestBlue,
         child: Consumer<RequestModel>(
           builder: (context, model, child) => Padding(
@@ -116,4 +139,33 @@ class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(100);
+}
+
+class RadioRow extends StatelessWidget {
+  const RadioRow(
+      {@required this.label, @required this.value, @required this.groupValue, this.onChanged, key})
+      : assert(label != null),
+        assert(value != null),
+        assert(groupValue != null),
+        super(key: key);
+
+  final String label;
+  final String value;
+  final String groupValue;
+  final Function(String) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Radio(
+          value: value,
+          groupValue: groupValue,
+          onChanged: (onChanged != null) ? onChanged : (val) {},
+          activeColor: styles.requestBlue,
+        ),
+        Text(label),
+      ],
+    );
+  }
 }
