@@ -27,6 +27,7 @@ dependencies:
   flag: any
   provider: any
   country_pickers: any
+  intl_phone_number_input: any
 
 dev_dependencies:
   flutter_test:

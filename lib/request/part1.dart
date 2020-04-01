@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:neighborhood_help/textfield.dart';
@@ -129,10 +130,17 @@ class RequestPart1 extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 30),
-                              PhoneNumberField(
+                              /*PhoneNumberField(
                                 countryCode: model.getCountryCode(),
                                 onSelected: (country) => model.setCountryCode(country.phoneCode),
-                              ),
+                              ),*/
+                              InternationalPhoneNumberInput.withCustomBorder(
+                                  onInputChanged: (number) {},
+                                  onInputValidated: (valid) {},
+                                  inputBorder: OutlineInputBorder(),
+                                  hintText: 'Hint',
+                                  autoValidate: true,
+                                  initialCountry2LetterCode: 'US',),
                               SizedBox(height: 30),
                               RaisedButton(
                                 onPressed: () => model.nextPart(),
@@ -141,7 +149,8 @@ class RequestPart1 extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     SizedBox(width: 70),
-                                    Text('Next Step', style: styles.introNextStyle.copyWith(color: Colors.white)),
+                                    Text('Next Step',
+                                        style: styles.introNextStyle.copyWith(color: Colors.white)),
                                     SizedBox(width: 70),
                                     Icon(
                                       Icons.arrow_forward,
