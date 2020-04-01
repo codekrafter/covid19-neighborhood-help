@@ -2,7 +2,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
-import 'package:neighborhood_help/textfield.dart';
+import 'package:neighborhood_help/widgets.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_webservice/places.dart';
 
 import 'requestBg.dart';
 import 'request.dart';
@@ -71,12 +73,44 @@ class RequestPart2 extends StatelessWidget {
                                     border: OutlineInputBorder(),
                                   ),
                                 )*/
-                              CustomTextField(
+                              /*CustomTextField(
                                 name: 'Your location',
                                 placeholder: 'City, postal code or address',
                                 isRequired: true,
                                 initialValue: model.location,
                                 onEditingCompleted: (value) => model.location = value,
+                              ),*/
+                              RichText(
+                                text: TextSpan(
+                                    text: 'Your location',
+                                    style: styles.textFieldNameStyle,
+                                    children: [
+                                      TextSpan(text: ' *', style: styles.requiredMarkStyle),
+                                    ]),
+                              ),
+                              SizedBox(height: 10),
+                              PlacesAutocompleteField(
+                                apiKey: "AIzaSyDLJndrvUwS26MHl9-1XYoU8c3RwzaLAHo",
+                                mode: Mode.overlay,
+                                inputDecoration: InputDecoration(
+                                  border: customTextFieldNormalBorder,
+                                  enabledBorder: customTextFieldNormalBorder,
+                                  focusedBorder: customTextFieldNormalBorder.copyWith(
+                                      borderSide: BorderSide(color: styles.requestBlue)),
+                                  hintText: 'City, postal code or address',
+                                  hintStyle: TextStyle(color: styles.inputBorderColor),
+                                  contentPadding: EdgeInsets.fromLTRB(15, 5, 3, 3),
+                                  //errorText: widget.errorText,
+                                ),
+                                leading: Icon(
+                                  Icons.location_searching,
+                                  size: 17,
+                                  color: styles.darkTextColor,
+                                ),
+                                trailingOnTap: () {},
+                                onChanged: (val) {
+                                  model.location = val;
+                                },
                               ),
                               SizedBox(height: 30),
                               CustomTextField(
@@ -123,7 +157,11 @@ class RequestPart2 extends StatelessWidget {
                               ),
                               SizedBox(height: 20),
                               RaisedButton(
-                                onPressed: () => model.nextPart(),
+                                onPressed: () {
+                                  print(model.location);
+
+                                  
+                                },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.max,

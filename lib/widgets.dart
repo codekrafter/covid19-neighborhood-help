@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import 'styles.dart' as styles;
 
+final customTextFieldNormalBorder = OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor));
+
 class CustomTextField extends StatefulWidget {
   const CustomTextField(
       {@required this.placeholder,
@@ -16,9 +18,10 @@ class CustomTextField extends StatefulWidget {
       this.maxLines,
       this.onEditingCompleted,
       this.initialValue,
+      this.errorText,
+      this.onChanged,
       Key key})
       : assert(placeholder != null),
-        assert(name != null),
         assert(isRequired != null),
         assert(keyboardType != null),
         super(key: key);
@@ -31,6 +34,8 @@ class CustomTextField extends StatefulWidget {
   final int maxLines;
   final Function(String) onEditingCompleted;
   final String initialValue;
+  final String errorText;
+  final Function(String) onChanged;
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -54,35 +59,38 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final normalBorder = OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(text: widget.name, style: styles.textFieldNameStyle, children: [
-            if (widget.isRequired) TextSpan(text: ' *', style: styles.requiredMarkStyle),
-          ]),
-        ),
-        SizedBox(height: 10),
+        if (widget.name != null)
+          RichText(
+            text: TextSpan(text: widget.name, style: styles.textFieldNameStyle, children: [
+              if (widget.isRequired) TextSpan(text: ' *', style: styles.requiredMarkStyle),
+            ]),
+          ),
+        if (widget.name != null) SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.only(left: 3),
           child: TextField(
             decoration: InputDecoration(
-              border: normalBorder,
-              enabledBorder: normalBorder,
+              border: customTextFieldNormalBorder,
+              enabledBorder: customTextFieldNormalBorder,
               focusedBorder:
-                  normalBorder.copyWith(borderSide: BorderSide(color: styles.requestBlue)),
+                  customTextFieldNormalBorder.copyWith(borderSide: BorderSide(color: styles.requestBlue)),
               hintText: widget.placeholder,
               hintStyle: TextStyle(color: styles.inputBorderColor),
               contentPadding: EdgeInsets.fromLTRB(
                   15, 5, 3, (widget.keyboardType == TextInputType.multiline) ? 10 : 3),
+              errorText: widget.errorText,
             ),
             cursorColor: styles.requestBlue,
             keyboardType: widget.keyboardType,
             minLines: widget.minLines,
             maxLines: widget.maxLines,
-            onChanged: (val) => _currentValue = val,
+            onChanged: (val) {
+              _currentValue = val;
+              if (widget.onChanged != null) widget.onChanged(val);
+            },
             onEditingComplete: () {
               if (widget.onEditingCompleted != null) widget.onEditingCompleted(_currentValue);
             },
@@ -132,7 +140,9 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Flags.getMiniFlag(
-                        countryList.firstWhere((c) => c.phoneCode == "${widget.countryCode}").isoCode,
+                        countryList
+                            .firstWhere((c) => c.phoneCode == "${widget.countryCode}")
+                            .isoCode,
                         null,
                         null),
                     SizedBox(width: 10),
@@ -459,6 +469,45 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+class NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}
+
+class RadioRow extends StatelessWidget {
+  const RadioRow(
+      {@required this.label, @required this.value, @required this.groupValue, this.onChanged, key})
+      : assert(label != null),
+        assert(value != null),
+        assert(groupValue != null),
+        super(key: key);
+
+  final String label;
+  final String value;
+  final String groupValue;
+  final Function(String) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Radio(
+          value: value,
+          groupValue: groupValue,
+          onChanged: onChanged ?? (val) {},
+          activeColor: styles.requestBlue,
+        ),
+        GestureDetector(
+          child: Text(label),
+          onTap: () => (onChanged != null) ? onChanged(value) : null,
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'request/request.dart';
 
 import 'home.dart';
+import 'styles.dart' as styles;
 
 void main() => runApp(MyApp());
 
@@ -12,7 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Neighborhood Help',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: styles.requestBlue,
+        accentColor: styles.requestBlue,
+        cursorColor: styles.requestBlue,
       ),
       initialRoute: '/',
       routes: {

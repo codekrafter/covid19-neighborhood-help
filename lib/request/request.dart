@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
+import 'package:google_maps_webservice/places.dart';
 
 import 'intro.dart';
 import 'part1.dart';
@@ -11,6 +12,8 @@ class RequestModel extends ChangeNotifier {
   Widget _currentPart = _partsMap[0];
   int _currentPartIndex = 0;
 
+  final places = GoogleMapsPlaces(apiKey: "");
+
   // Members just used for form fields, so no need to have a rich setter
   String name;
   String email;
@@ -19,9 +22,14 @@ class RequestModel extends ChangeNotifier {
   String message;
   String urgency;
 
+  // Not to be serialized, just used to keep the user's phone in a formatted state
+  String numberFieldValue = "";
+
   // Form field values that need rich interaction
-  String _contactMethod = "";
+  String _contactMethod = "phone";
   String _countryCode = '1';
+  String _nameErrorText;
+  String _contactMethodErrorText;
 
   String getContactMethod() => _contactMethod;
 
@@ -31,11 +39,36 @@ class RequestModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String getContactDetails() {
+    if (_contactMethod == "phone") {
+      return "$phone";
+    } else {
+      return email;
+    }
+  }
+
   String getCountryCode() => _countryCode;
 
   void setCountryCode(String newValue) {
     _countryCode = newValue;
     print('new country code: $newValue');
+
+    notifyListeners();
+  }
+
+  String getNameErrorText() => _nameErrorText;
+
+  void setNameErrorText(String newValue) {
+    _nameErrorText = newValue;
+
+    notifyListeners();
+  }
+
+  String getContactMethodErrorText() => _contactMethodErrorText;
+
+  void setContactMethodErrorText(String newValue) {
+    _contactMethodErrorText = newValue;
+
     notifyListeners();
   }
 
@@ -139,33 +172,4 @@ class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(100);
-}
-
-class RadioRow extends StatelessWidget {
-  const RadioRow(
-      {@required this.label, @required this.value, @required this.groupValue, this.onChanged, key})
-      : assert(label != null),
-        assert(value != null),
-        assert(groupValue != null),
-        super(key: key);
-
-  final String label;
-  final String value;
-  final String groupValue;
-  final Function(String) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Radio(
-          value: value,
-          groupValue: groupValue,
-          onChanged: (onChanged != null) ? onChanged : (val) {},
-          activeColor: styles.requestBlue,
-        ),
-        Text(label),
-      ],
-    );
-  }
 }
