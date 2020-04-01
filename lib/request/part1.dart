@@ -18,6 +18,7 @@ class RequestPart1 extends StatelessWidget {
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light),
       child: Scaffold(
+        backgroundColor: styles.requestBlue,
         appBar: RequestStepAppBar(
           currentStep: '1',
         ),
