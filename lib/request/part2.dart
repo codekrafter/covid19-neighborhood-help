@@ -103,7 +103,7 @@ class RequestPart2 extends StatelessWidget {
                                   hintText: 'City, postal code or address',
                                   hintStyle: TextStyle(color: styles.inputBorderColor),
                                   contentPadding: EdgeInsets.fromLTRB(15, 5, 3, 3),
-                                  //errorText: widget.errorText,
+                                  errorText: model.getLocationErrorText(),
                                 ),
                                 leading: Icon(
                                   Icons.location_searching,
@@ -113,11 +113,18 @@ class RequestPart2 extends StatelessWidget {
                                 trailingOnTap: () {},
                                 onChanged: (val) {
                                   model.location = val;
+
+                                  if (val == null || val.isEmpty) {
+                                    model.setLocationErrorText("Please provide your location");
+                                  } else {
+                                    model.setLocationErrorText(null);
+                                  }
                                 },
                                 onError: (resp) {
                                   print("Places API Autocomplete Error");
                                   print(resp.errorMessage);
                                 },
+                                sessionToken: model.sessionToken,
                               ),
                               SizedBox(height: 30),
                               CustomTextField(
@@ -128,6 +135,15 @@ class RequestPart2 extends StatelessWidget {
                                 maxLines: 5,
                                 initialValue: model.message,
                                 onEditingCompleted: (value) => model.message = value,
+                                errorText: model.getMessageErrorText(),
+                                onChanged: (val) {
+                                  if (val == null || val.isEmpty) {
+                                    model.setMessageErrorText(
+                                        "Please provide a message with your request");
+                                  } else {
+                                    model.setMessageErrorText(null);
+                                  }
+                                },
                               ),
                               SizedBox(height: 20),
                               CheckboxRow(
@@ -141,12 +157,17 @@ class RequestPart2 extends StatelessWidget {
                                   bool invalid = false;
 
                                   if (model.location == null || model.location.isEmpty) {
+                                    model.setLocationErrorText("Please provide your location");
                                     invalid = true;
                                   }
 
                                   if (model.message == null || model.message.isEmpty) {
+                                    model.setMessageErrorText(
+                                        "Please provide a message with your request");
                                     invalid = true;
                                   }
+
+                                  if (invalid) return;
 
                                   //TODO: Integrate Maps Places Search and Details API
                                   final searchResponse =
@@ -158,11 +179,12 @@ class RequestPart2 extends StatelessWidget {
                                   //searchResponse.results.map((res) => res.placeId));
                                   final detailsResponse = await model
                                       .getPlacesAPI()
-                                      .getDetailsByPlaceId(searchResponse.results[0].placeId);
-                                  // detailsResponse.result.addressComponents
-                                  //     .where((com) => !com.types.contains())
-                                  //     .map((com) => "${com.types}: ${com.longName}")
-                                  //     .join("\n");
+                                      .getDetailsByPlaceId(searchResponse.results[0].placeId,
+                                          fields: ['address_component', 'formatted_address'],
+                                          sessionToken: model.sessionToken);
+                                  print(detailsResponse.toJson().toString());
+                                  //detailsResponse.result.addressComponents
+                                  //    .where((com) => !com.types.contains(''));
                                   //print(detailsResponse.result.addressComponents[0].types[0]);
                                   // final postalCode = addrComp.firstWhere((com) => com.types[0] == "postal_code").longName;
                                   // request.where("postalCode", "==", postalCode).where("country", "==", country)

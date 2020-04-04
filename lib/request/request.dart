@@ -6,6 +6,8 @@ import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:google_maps_webservice/places.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl_phone_number_input/src/utils/formatter/as_you_type_formatter.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 import 'dart:io' show Platform;
 
 import 'intro.dart';
@@ -23,13 +25,14 @@ class RequestModel extends ChangeNotifier {
   void _getAPIKey() async {
     //final options = await FirebaseApp.instance.options;
     //apiKey = options.apiKey;
-    if (Platform.isIOS) {
+    /*if (Platform.isIOS) {
       apiKey = "AIzaSyCdslN2f7ELqDonpx1pfkwe1lYNiWVUimg";
     } else if (Platform.isAndroid) {
       apiKey = "AIzaSyCPMPccYO5qNskPLUCxWWe_yPm3Q-iA3kU";
     } else {
       print('Unknown Platform');
-    }
+    }*/
+    apiKey = "AIzaSyDLJndrvUwS26MHl9-1XYoU8c3RwzaLAHo";
 
     _places = GoogleMapsPlaces(apiKey: apiKey);
 
@@ -41,7 +44,7 @@ class RequestModel extends ChangeNotifier {
     final defaultsSnapshot =
         await Firestore.instance.collection("users").document(currentUser.uid).get();
     final data = defaultsSnapshot.data;
-
+    print(data);
     _contactMethod = data['contact_method'] ?? '';
     //_countryCode = data['country_code'] ?? '1';
     name = data['name'] ?? null;
@@ -61,8 +64,6 @@ class RequestModel extends ChangeNotifier {
 
   void saveDefaults() async {
     final currentUser = await FirebaseAuth.instance.currentUser();
-    print('got user ${currentUser.uid}');
-    print(name);
     final data = {
       'contact_method': _contactMethod, // Should never be null
       //'country_code': _countryCode, // Should never be null
@@ -74,8 +75,15 @@ class RequestModel extends ChangeNotifier {
         'phone': phone
     };
 
-    await Firestore.instance.collection("users").document(currentUser.uid).updateData(data);
-    print('updated data');
+    await Firestore.instance.collection("users").document(currentUser.uid).setData(data, merge: true);
+  }
+
+  void validateSessionToken() {
+    if (sessionToken == null) {
+      sessionToken = uuid.v4();
+    }
+
+    print(sessionToken);
   }
 
   Widget _currentPart = _partsMap[0];
@@ -83,6 +91,8 @@ class RequestModel extends ChangeNotifier {
 
   String apiKey;
   GoogleMapsPlaces _places;
+  static final uuid = Uuid();
+  String sessionToken;
 
   GoogleMapsPlaces getPlacesAPI() => _places;
 
@@ -112,6 +122,8 @@ class RequestModel extends ChangeNotifier {
   String _nameErrorText;
   String _contactMethodErrorText;
   bool _urgent = false;
+  String _locationErrorText;
+  String _messageErrorText;
 
   String getContactMethod() => _contactMethod;
 
@@ -163,6 +175,22 @@ class RequestModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String getLocationErrorText() => _locationErrorText;
+
+  void setLocationErrorText(String newValue) {
+    _locationErrorText = newValue;
+
+    notifyListeners();
+  }
+
+  String getMessageErrorText() => _messageErrorText;
+
+  void setMessageErrorText(String newValue) {
+    _messageErrorText = newValue;
+
+    notifyListeners();
+  }
+
   static const List<Widget> _partsMap = [
     RequestIntro(),
     RequestPart1(),
@@ -182,9 +210,13 @@ class RequestModel extends ChangeNotifier {
     _currentPartIndex++;
 
     _setCurrentPart(_partsMap[_currentPartIndex]);
-    if (_currentPartIndex == 2)
-      _numberController =
-          null; // If moving away from part 1, remove the reference to the number text controller
+    if (_currentPartIndex == 2) {
+      // If moving away from part 1, remove the reference to the number text controller
+      _numberController = null;
+
+      // If moving to part 2 make sure we have a valid session token
+      validateSessionToken();
+    }
   }
 
   void previousPart() {
