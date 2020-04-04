@@ -30,6 +30,7 @@ dependencies:
   intl_phone_number_input: any
   flutter_google_places: any
   uuid: ^2.0.4
+  flutter_i18n: any
 
   firebase_auth: any
   cloud_firestore: any
