@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:neighborhood_help/widgets.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'requestBg.dart';
 import 'request.dart';
@@ -48,14 +50,15 @@ class RequestPart2 extends StatelessWidget {
                             'Request help',
                             style: styles.titleStyle,
                           ),
-                          SizedBox(height: 5),
+                          SizedBox(height: 15),
                           Text(
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum.',
-                            style: styles.subtitleStyle.copyWith(fontSize: 12),
+                            style: styles.subtitleStyle,
                           ),
                         ],
                       ),
                     ),
+                    SizedBox(height: 20),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
                       child: Center(
@@ -90,7 +93,7 @@ class RequestPart2 extends StatelessWidget {
                               ),
                               SizedBox(height: 10),
                               PlacesAutocompleteField(
-                                apiKey: "AIzaSyDLJndrvUwS26MHl9-1XYoU8c3RwzaLAHo",
+                                apiKey: model.apiKey,
                                 mode: Mode.overlay,
                                 inputDecoration: InputDecoration(
                                   border: customTextFieldNormalBorder,
@@ -111,6 +114,10 @@ class RequestPart2 extends StatelessWidget {
                                 onChanged: (val) {
                                   model.location = val;
                                 },
+                                onError: (resp) {
+                                  print("Places API Autocomplete Error");
+                                  print(resp.errorMessage);
+                                },
                               ),
                               SizedBox(height: 30),
                               CustomTextField(
@@ -122,45 +129,48 @@ class RequestPart2 extends StatelessWidget {
                                 initialValue: model.message,
                                 onEditingCompleted: (value) => model.message = value,
                               ),
-                              SizedBox(height: 30),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  RichText(
-                                    text: TextSpan(
-                                      text: 'When do you need it by?',
-                                      style: styles.textFieldNameStyle,
-                                      children: [
-                                        TextSpan(text: ' *', style: styles.requiredMarkStyle),
-                                      ],
-                                    ),
-                                  ),
-                                  RadioRow(
-                                    label: '24h',
-                                    value: 'phone',
-                                    groupValue: model.getContactMethod(),
-                                    onChanged: (val) => model.setContactMethod(val),
-                                  ),
-                                  RadioRow(
-                                    label: '2 days',
-                                    value: 'email',
-                                    groupValue: model.getContactMethod(),
-                                    onChanged: (val) => model.setContactMethod(val),
-                                  ),
-                                  RadioRow(
-                                    label: '1 week',
-                                    value: 'other',
-                                    groupValue: model.getContactMethod(),
-                                    onChanged: (val) => model.setContactMethod(val),
-                                  ),
-                                ],
-                              ),
                               SizedBox(height: 20),
+                              CheckboxRow(
+                                label: 'As soon as possible',
+                                value: model.getUrgent(),
+                                onChanged: (val) => model.setUrgent(val),
+                              ),
+                              SizedBox(height: 30),
                               RaisedButton(
-                                onPressed: () {
-                                  print(model.location);
+                                onPressed: () async {
+                                  bool invalid = false;
 
-                                  
+                                  if (model.location == null || model.location.isEmpty) {
+                                    invalid = true;
+                                  }
+
+                                  if (model.message == null || model.message.isEmpty) {
+                                    invalid = true;
+                                  }
+
+                                  //TODO: Integrate Maps Places Search and Details API
+                                  final searchResponse =
+                                      await model.getPlacesAPI().searchByText(model.location);
+
+                                  if (searchResponse.results.length > 1)
+                                    print(
+                                        "Places search returned more than one location, using the first (had ${searchResponse.results.length} places)"); // TODO: Implement dialog to pick the preferred location
+                                  //searchResponse.results.map((res) => res.placeId));
+                                  final detailsResponse = await model
+                                      .getPlacesAPI()
+                                      .getDetailsByPlaceId(searchResponse.results[0].placeId);
+                                  // detailsResponse.result.addressComponents
+                                  //     .where((com) => !com.types.contains())
+                                  //     .map((com) => "${com.types}: ${com.longName}")
+                                  //     .join("\n");
+                                  //print(detailsResponse.result.addressComponents[0].types[0]);
+                                  // final postalCode = addrComp.firstWhere((com) => com.types[0] == "postal_code").longName;
+                                  // request.where("postalCode", "==", postalCode).where("country", "==", country)
+                                  // request.get();
+
+                                  // Firestore.instance
+                                  //     .collection("requests")
+                                  //     .add(detailsResponse.result.addressComponents);
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

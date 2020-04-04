@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 import 'styles.dart' as styles;
 
-final customTextFieldNormalBorder = OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor));
+final customTextFieldNormalBorder =
+    OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor));
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField(
@@ -75,8 +76,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             decoration: InputDecoration(
               border: customTextFieldNormalBorder,
               enabledBorder: customTextFieldNormalBorder,
-              focusedBorder:
-                  customTextFieldNormalBorder.copyWith(borderSide: BorderSide(color: styles.requestBlue)),
+              focusedBorder: customTextFieldNormalBorder.copyWith(
+                  borderSide: BorderSide(color: styles.requestBlue)),
               hintText: widget.placeholder,
               hintStyle: TextStyle(color: styles.inputBorderColor),
               contentPadding: EdgeInsets.fromLTRB(
@@ -474,10 +475,10 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     );
   }
 }
+
 class NoGlowScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 }
@@ -508,6 +509,34 @@ class RadioRow extends StatelessWidget {
         GestureDetector(
           child: Text(label),
           onTap: () => (onChanged != null) ? onChanged(value) : null,
+        ),
+      ],
+    );
+  }
+}
+
+class CheckboxRow extends StatelessWidget {
+  const CheckboxRow({@required this.label, @required this.value, this.onChanged, key})
+      : assert(label != null),
+        assert(value != null),
+        super(key: key);
+
+  final String label;
+  final bool value;
+  final Function(bool) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+          value: value,
+          onChanged: onChanged ?? (val) {},
+          activeColor: styles.requestBlue,
+        ),
+        GestureDetector(
+          child: Text(label),
+          onTap: () => (onChanged != null) ? onChanged(!value) : null,
         ),
       ],
     );

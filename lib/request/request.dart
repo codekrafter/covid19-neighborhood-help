@@ -1,7 +1,12 @@
+import 'package:country_pickers/country.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:google_maps_webservice/places.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl_phone_number_input/src/utils/formatter/as_you_type_formatter.dart';
+import 'dart:io' show Platform;
 
 import 'intro.dart';
 import 'part1.dart';
@@ -9,31 +14,109 @@ import 'part2.dart';
 import 'part3.dart';
 
 class RequestModel extends ChangeNotifier {
+  RequestModel() {
+    _getAPIKey();
+
+    resetToDefaults();
+  }
+
+  void _getAPIKey() async {
+    //final options = await FirebaseApp.instance.options;
+    //apiKey = options.apiKey;
+    if (Platform.isIOS) {
+      apiKey = "AIzaSyCdslN2f7ELqDonpx1pfkwe1lYNiWVUimg";
+    } else if (Platform.isAndroid) {
+      apiKey = "AIzaSyCPMPccYO5qNskPLUCxWWe_yPm3Q-iA3kU";
+    } else {
+      print('Unknown Platform');
+    }
+
+    _places = GoogleMapsPlaces(apiKey: apiKey);
+
+    notifyListeners();
+  }
+
+  void resetToDefaults() async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    final defaultsSnapshot =
+        await Firestore.instance.collection("users").document(currentUser.uid).get();
+    final data = defaultsSnapshot.data;
+
+    _contactMethod = data['contact_method'] ?? '';
+    //_countryCode = data['country_code'] ?? '1';
+    name = data['name'] ?? null;
+    email = data['email'] ?? null;
+    phone = data['phone'] ?? null;
+
+    // fill in formatted number if a default number is saved
+    if (phone != null) {
+      //final localNumber = phone.toString().substring(_countryCode.length);
+      //TODO: parse stored number to displayed number
+      //AsYouTypeFormatter()
+      //numberFieldValue = PhoneInputFormatter
+    }
+
+    notifyListeners();
+  }
+
+  void saveDefaults() async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    print('got user ${currentUser.uid}');
+    print(name);
+    final data = {
+      'contact_method': _contactMethod, // Should never be null
+      //'country_code': _countryCode, // Should never be null
+      if (name != null)
+        'name': name,
+      if (email != null)
+        'email': email,
+      if (phone != null)
+        'phone': phone
+    };
+
+    await Firestore.instance.collection("users").document(currentUser.uid).updateData(data);
+    print('updated data');
+  }
+
   Widget _currentPart = _partsMap[0];
   int _currentPartIndex = 0;
 
-  final places = GoogleMapsPlaces(apiKey: "");
+  String apiKey;
+  GoogleMapsPlaces _places;
+
+  GoogleMapsPlaces getPlacesAPI() => _places;
+
+  TextEditingController _numberController;
+
+  TextEditingController getNumberController() {
+    if (_numberController == null)
+      _numberController = TextEditingController(text: numberFieldValue ?? "");
+
+    return _numberController;
+  }
 
   // Members just used for form fields, so no need to have a rich setter
   String name;
   String email;
   int phone;
+  Country phoneCountry;
   String location;
   String message;
-  String urgency;
 
   // Not to be serialized, just used to keep the user's phone in a formatted state
-  String numberFieldValue = "";
+  String numberFieldValue = '';
 
   // Form field values that need rich interaction
-  String _contactMethod = "phone";
-  String _countryCode = '1';
+  String _contactMethod = '';
+  //String _countryCode = '1';
   String _nameErrorText;
   String _contactMethodErrorText;
+  bool _urgent = false;
 
   String getContactMethod() => _contactMethod;
 
   void setContactMethod(String newValue) {
+    if (_contactMethod == "phone") _numberController = null;
     _contactMethod = newValue;
 
     notifyListeners();
@@ -47,14 +130,14 @@ class RequestModel extends ChangeNotifier {
     }
   }
 
-  String getCountryCode() => _countryCode;
+  // String getCountryCode() => _countryCode;
 
-  void setCountryCode(String newValue) {
-    _countryCode = newValue;
-    print('new country code: $newValue');
+  // void setCountryCode(String newValue) {
+  //   _countryCode = newValue;
+  //   print('new country code: $newValue');
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   String getNameErrorText() => _nameErrorText;
 
@@ -68,6 +151,14 @@ class RequestModel extends ChangeNotifier {
 
   void setContactMethodErrorText(String newValue) {
     _contactMethodErrorText = newValue;
+
+    notifyListeners();
+  }
+
+  bool getUrgent() => _urgent;
+
+  void setUrgent(bool newValue) {
+    _urgent = newValue;
 
     notifyListeners();
   }
@@ -91,12 +182,18 @@ class RequestModel extends ChangeNotifier {
     _currentPartIndex++;
 
     _setCurrentPart(_partsMap[_currentPartIndex]);
+    if (_currentPartIndex == 2)
+      _numberController =
+          null; // If moving away from part 1, remove the reference to the number text controller
   }
 
   void previousPart() {
     _currentPartIndex--;
 
     _setCurrentPart(_partsMap[_currentPartIndex]);
+    if (_currentPartIndex == 0)
+      _numberController =
+          null; // If moving away from part 1, remove the reference to the number text controller
   }
 }
 
@@ -157,7 +254,10 @@ class RequestStepAppBar extends StatelessWidget implements PreferredSizeWidget {
                   color: Colors.white,
                   size: 23,
                 ),
-                onPressed: () => model.previousPart(),
+                onPressed: () {
+                  model.previousPart();
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
               ),
               Text(
                 'Step $currentStep of $totalSteps',

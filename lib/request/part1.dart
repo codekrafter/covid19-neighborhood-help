@@ -16,13 +16,8 @@ class RequestPart1 extends StatefulWidget {
 }
 
 class _RequestPart1State extends State<RequestPart1> {
-  TextEditingController numberController;
-
   @override
   Widget build(BuildContext context) {
-    if (numberController == null)
-      numberController =
-          TextEditingController(text: Provider.of<RequestModel>(context).numberFieldValue ?? "");
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
           statusBarColor: styles.requestBlue,
@@ -151,10 +146,6 @@ class _RequestPart1State extends State<RequestPart1> {
                                   ],
                                 ),
                                 SizedBox(height: 30),
-                                /*PhoneNumberField(
-                                  countryCode: model.getCountryCode(),
-                                  onSelected: (country) => model.setCountryCode(country.phoneCode),
-                                ),*/
                                 AnimatedSwitcher(
                                   duration: Duration(milliseconds: 200),
                                   child: (model.getContactMethod() == "email")
@@ -173,24 +164,26 @@ class _RequestPart1State extends State<RequestPart1> {
                                             }
                                           },
                                         )
-                                      : InternationalPhoneNumberInput.withCustomBorder(
-                                          onInputChanged: (number) {
-                                            model.numberFieldValue = numberController.text;
-
-                                            model.phone =
-                                                int.tryParse(number.phoneNumber.substring(1));
-                                          },
-                                          onInputValidated: (valid) {
-                                            if (!valid) model.phone = null;
-                                            print(model.phone);
-                                          },
-                                          inputBorder: OutlineInputBorder(),
-                                          autoValidate: true,
-                                          hintText: '',
-                                          initialCountry2LetterCode: 'US',
-                                          selectorType: PhoneInputSelectorType.DIALOG,
-                                          textFieldController: numberController,
-                                        ),
+                                      : (model.getContactMethod() == "phone")
+                                          ? InternationalPhoneNumberInput.withCustomBorder(
+                                              onInputChanged: (number) {
+                                                if (model.getNumberController() != null)
+                                                  model.numberFieldValue =
+                                                      model.getNumberController().text;
+                                                model.phone =
+                                                    int.tryParse(number.phoneNumber.substring(1));
+                                              },
+                                              onInputValidated: (valid) {
+                                                if (!valid) model.phone = null;
+                                              },
+                                              inputBorder: OutlineInputBorder(),
+                                              autoValidate: true,
+                                              hintText: '',
+                                              initialCountry2LetterCode: 'US',
+                                              selectorType: PhoneInputSelectorType.DIALOG,
+                                              textFieldController: model.getNumberController(),
+                                            )
+                                          : Container(),
                                 ),
                                 SizedBox(height: 30),
                                 RaisedButton(
@@ -215,6 +208,7 @@ class _RequestPart1State extends State<RequestPart1> {
                                     }
 
                                     if (!invalid) {
+                                      model.saveDefaults();
                                       model.nextPart();
                                     }
                                   },

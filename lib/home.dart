@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'styles.dart' as styles;
@@ -17,8 +19,10 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
   }
+
   @override
   Widget build(BuildContext context) {
+    checkUserStatus();
     return Scaffold(
       body: Stack(
         children: [
@@ -74,6 +78,24 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Future<void> checkUserStatus() async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+    if (currentUser == null) {
+      await FirebaseAuth.instance.signInAnonymously();
+    } else {
+      try {
+        await currentUser.getIdToken(refresh: true);
+      } on PlatformException catch (e) {
+        if (e.code == "ERROR_USER_NOT_FOUND") {
+          await FirebaseAuth.instance.signOut();
+          checkUserStatus();
+        } else {
+          throw e;
+        }
+      }
+    }
   }
 }
 

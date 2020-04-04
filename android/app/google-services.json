@@ -38,6 +38,14 @@
             {
               "client_id": "161534165723-kgjid3cj12malrckog6lkla35vqmo6fr.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "161534165723-jq1026fepld825a073l3n3v26tku0ucr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.codekraft.neighborhoodHelp",
+                "app_store_id": "1505438928"
+              }
             }
           ]
         }
