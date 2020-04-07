@@ -14,15 +14,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
+  /*@override
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     checkUserStatus();
+    precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
     return Scaffold(
       body: Stack(
         children: [

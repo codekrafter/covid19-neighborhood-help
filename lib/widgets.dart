@@ -46,6 +46,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   String _currentValue;
   final _focus = FocusNode();
   final _controller = TextEditingController();
+  bool _modified = false;
 
   @override
   void initState() {
@@ -60,6 +61,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_modified) {
+      if (widget.initialValue != null && widget.initialValue != _controller.text) {
+        _currentValue = widget.initialValue;
+        _controller.text = _currentValue;
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -89,6 +97,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             minLines: widget.minLines,
             maxLines: widget.maxLines,
             onChanged: (val) {
+              _modified = true;
               _currentValue = val;
               if (widget.onChanged != null) widget.onChanged(val);
             },

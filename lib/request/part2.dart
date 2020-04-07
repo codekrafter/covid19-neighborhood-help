@@ -1,6 +1,6 @@
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:geohash/geohash.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:neighborhood_help/widgets.dart';
@@ -8,7 +8,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'requestBg.dart';
+import 'package:neighborhood_help/shapedBg.dart';
 import 'request.dart';
 
 class RequestPart2 extends StatelessWidget {
@@ -22,12 +22,14 @@ class RequestPart2 extends StatelessWidget {
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light),
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: styles.requestBlue,
         appBar: RequestStepAppBar(
           currentStep: '2',
         ),
         body: Stack(
           children: [
-            RequestBackground(),
+            ShapedBackground(),
             Center(
               child: Consumer<RequestModel>(
                 builder: (context, model, child) => ListView(
@@ -154,6 +156,7 @@ class RequestPart2 extends StatelessWidget {
                               SizedBox(height: 30),
                               RaisedButton(
                                 onPressed: () async {
+                                  //TODO: Add loading
                                   bool invalid = false;
 
                                   if (model.location == null || model.location.isEmpty) {
@@ -169,7 +172,6 @@ class RequestPart2 extends StatelessWidget {
 
                                   if (invalid) return;
 
-                                  //TODO: Integrate Maps Places Search and Details API
                                   final searchResponse =
                                       await model.getPlacesAPI().searchByText(model.location);
 
@@ -180,19 +182,27 @@ class RequestPart2 extends StatelessWidget {
                                   final detailsResponse = await model
                                       .getPlacesAPI()
                                       .getDetailsByPlaceId(searchResponse.results[0].placeId,
-                                          fields: ['address_component', 'formatted_address'],
+                                          fields: ['geometry', 'formatted_address'],
                                           sessionToken: model.sessionToken);
-                                  print(detailsResponse.toJson().toString());
-                                  //detailsResponse.result.addressComponents
-                                  //    .where((com) => !com.types.contains(''));
-                                  //print(detailsResponse.result.addressComponents[0].types[0]);
-                                  // final postalCode = addrComp.firstWhere((com) => com.types[0] == "postal_code").longName;
-                                  // request.where("postalCode", "==", postalCode).where("country", "==", country)
-                                  // request.get();
 
-                                  // Firestore.instance
-                                  //     .collection("requests")
-                                  //     .add(detailsResponse.result.addressComponents);
+                                  final location = detailsResponse.result.geometry.location;
+
+                                  final data = <String, dynamic>{
+                                    if (model.getContactMethod() == 'email') 'email': model.email,
+                                    if (model.getContactMethod() == 'phone') 'phone': model.phone,
+                                    'message': model.message,
+                                    'name': model.name,
+                                    'time_created': FieldValue.serverTimestamp(),
+                                    'urgent': model.getUrgent(),
+                                    'formatted_address': detailsResponse.result.formattedAddress,
+                                    'lat': location.lat,
+                                    'lng': location.lng,
+                                    'geohash': Geohash.encode(location.lat, location.lng)
+                                  };
+
+                                  Firestore.instance.collection("requests").add(data);
+
+                                  model.nextPart();
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

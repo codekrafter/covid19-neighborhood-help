@@ -56,3 +56,20 @@ TextStyle get requiredMarkStyle => TextStyle(
   fontWeight: FontWeight.w800,
   fontSize: 15
 );
+
+TextStyle get postTitleStyle => TextStyle(
+  color: darkTextColor,
+  fontWeight: FontWeight.w800,
+  fontSize: 15
+);
+
+TextStyle get postBodyStyle => TextStyle(
+  color: darkTextColor,
+  fontSize: 15
+);
+
+TextStyle get contactFeatureStyle => TextStyle(
+  color: darkTextColor,
+  fontWeight: FontWeight.w800,
+  fontSize: 16
+);

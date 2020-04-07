@@ -3,8 +3,8 @@ import 'package:vector_math/vector_math.dart' as vm;
 
 import 'package:neighborhood_help/styles.dart' as styles;
 
-class RequestBackground extends StatelessWidget {
-  RequestBackground({Key key}) : super(key: key);
+class ShapedBackground extends StatelessWidget {
+  ShapedBackground({Key key}) : super(key: key);
 
   double storedWidth;
   double storedHeight;
@@ -22,15 +22,15 @@ class RequestBackground extends StatelessWidget {
           child: Container(
             color: styles.backgroundWhite
           ),
-          foregroundPainter: RequestBackgroundPainter(context),
+          foregroundPainter: ShapedBackgroundPainter(context),
         ),
       ),
     );
   }
 }
 
-class RequestBackgroundPainter extends CustomPainter {
-  RequestBackgroundPainter(this.context);
+class ShapedBackgroundPainter extends CustomPainter {
+  ShapedBackgroundPainter(this.context);
 
   final BuildContext context;
 

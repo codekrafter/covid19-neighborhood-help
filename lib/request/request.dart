@@ -17,12 +17,12 @@ import 'part3.dart';
 
 class RequestModel extends ChangeNotifier {
   RequestModel() {
-    _getAPIKey();
+    _initApi();
 
     resetToDefaults();
   }
 
-  void _getAPIKey() async {
+  void _initApi() async {
     //final options = await FirebaseApp.instance.options;
     //apiKey = options.apiKey;
     /*if (Platform.isIOS) {
@@ -32,7 +32,7 @@ class RequestModel extends ChangeNotifier {
     } else {
       print('Unknown Platform');
     }*/
-    apiKey = "AIzaSyDLJndrvUwS26MHl9-1XYoU8c3RwzaLAHo";
+    apiKey = "AIzaSyAykE-8rdRtJLj2Rads7kGKpX8KEYxmnxc";
 
     _places = GoogleMapsPlaces(apiKey: apiKey);
 

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:neighborhood_help/widgets.dart';
 
-import 'requestBg.dart';
+import 'package:neighborhood_help/shapedBg.dart';
 import 'request.dart';
 
 class RequestPart1 extends StatefulWidget {
@@ -33,7 +33,7 @@ class _RequestPart1State extends State<RequestPart1> {
           behavior: NoGlowScrollBehavior(),
           child: Stack(
             children: [
-              RequestBackground(),
+              ShapedBackground(),
               Center(
                 child: Consumer<RequestModel>(
                   builder: (context, model, child) => ListView(
