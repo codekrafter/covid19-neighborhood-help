@@ -195,8 +195,8 @@ class RequestPart2 extends StatelessWidget {
                                     'time_created': FieldValue.serverTimestamp(),
                                     'urgent': model.getUrgent(),
                                     'formatted_address': detailsResponse.result.formattedAddress,
-                                    'lat': location.lat,
-                                    'lng': location.lng,
+                                    //'lat': location.lat,
+                                    //'lng': location.lng,
                                     'geohash': Geohash.encode(location.lat, location.lng)
                                   };
 

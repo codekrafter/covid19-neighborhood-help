@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geohash/geohash.dart';
-import 'package:neighborhood_help/volunteer/search.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:google_maps_webservice/places.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 
 import 'intro.dart';
+import 'results.dart';
 
 class VolunteerModel extends ChangeNotifier {
   VolunteerModel() {
@@ -37,12 +38,23 @@ class VolunteerModel extends ChangeNotifier {
 
   String location;
 
-  double _radius = 10;
+  double _radius = 0;
+  List<DocumentSnapshot> _requests = [];
 
   double getRadius() => _radius;
 
   void setRadius(double newValue) {
+    if (_radius == newValue) return;
     _radius = newValue;
+
+    refreshRequests();
+    // /notifyListeners();
+  }
+
+  List<DocumentSnapshot> getRequests() => _requests;
+
+  void setRequests(List<DocumentSnapshot> newValue) {
+    _requests = newValue;
 
     notifyListeners();
   }
@@ -52,10 +64,12 @@ class VolunteerModel extends ChangeNotifier {
 
   static const List<Widget> _partsMap = [
     VolunteerIntro(),
-    VolunteerSearch(),
+    VolunteerResults(),
   ];
 
-  Widget getCurrentPart() => _currentPart;
+  Widget getCurrentPart() {
+    return _currentPart;
+  }
 
   void _setCurrentPart(Widget newPart) {
     _currentPart = newPart;
@@ -73,6 +87,28 @@ class VolunteerModel extends ChangeNotifier {
     _currentPartIndex--;
 
     _setCurrentPart(_partsMap[_currentPartIndex]);
+  }
+
+  void refreshRequests() async {
+    if (this.location == null || this.location.isEmpty) return;
+    setRequests([]); // Trigger loading
+    print('request refresh triggered');
+
+    final searchResponse = await getPlacesAPI().searchByText(this.location);
+
+    final detailsResponse = await getPlacesAPI().getDetailsByPlaceId(
+        searchResponse.results[0].placeId,
+        fields: ['geometry', 'formatted_address'],
+        sessionToken: sessionToken);
+
+    final location = detailsResponse.result.geometry.location;
+
+    final snapshot =
+        await queryDocumentsInRange(lat: location.lat, lng: location.lng, radius: getRadius());
+    print(snapshot.documents.length);
+    setRequests(snapshot.documents);
+
+    //notifyListeners();
   }
 
   // Query Helpers
@@ -93,10 +129,15 @@ class VolunteerModel extends ChangeNotifier {
     final lowerHash = Geohash.encode(lowerLat, lowerLng);
     final upperHash = Geohash.encode(upperLat, upperLng);
 
+    print('lower: $lowerHash');
+    print('upper: $upperHash');
+
     if (collection == null) collection = Firestore.instance.collection('requests');
 
-    final query = collection.where('geohash',
-        isGreaterThanOrEqualTo: lowerHash, isLessThanOrEqualTo: upperHash);
+    final query = collection
+        .where('geohash', isGreaterThanOrEqualTo: lowerHash, isLessThanOrEqualTo: upperHash)
+        .orderBy('geohash', descending: true)
+        .orderBy('urgent', descending: true);
 
     final snapshot = await query.getDocuments();
     return snapshot;

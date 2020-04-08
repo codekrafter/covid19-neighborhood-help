@@ -118,7 +118,7 @@ class _RequestPart1State extends State<RequestPart1> {
                                   },
                                 ),
                                 SizedBox(height: 30),
-                                // Pretty much useless to add a column in a column but I added it anyways for abstraction
+                                // Redundant column for abstraction
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -135,13 +135,19 @@ class _RequestPart1State extends State<RequestPart1> {
                                       label: 'Phone',
                                       value: 'phone',
                                       groupValue: model.getContactMethod(),
-                                      onChanged: (val) => model.setContactMethod(val),
+                                      onChanged: (val) {
+                                        model.setContactMethod(val);
+                                        FocusScope.of(context).requestFocus(FocusNode());
+                                      },
                                     ),
                                     RadioRow(
                                       label: 'Email',
                                       value: 'email',
                                       groupValue: model.getContactMethod(),
-                                      onChanged: (val) => model.setContactMethod(val),
+                                      onChanged: (val) {
+                                        model.setContactMethod(val);
+                                        FocusScope.of(context).requestFocus(FocusNode());
+                                      },
                                     ),
                                   ],
                                 ),
@@ -154,6 +160,7 @@ class _RequestPart1State extends State<RequestPart1> {
                                           placeholder: "Your email address",
                                           errorText: model.getContactMethodErrorText(),
                                           initialValue: model.email,
+                                          keyboardType: TextInputType.emailAddress,
                                           onChanged: (val) {
                                             model.email = val;
                                             if (val == null || val.isEmpty) {

@@ -1,6 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geohash/geohash.dart';
 
 import 'request/request.dart';
 import 'volunteer/volunteer.dart';
@@ -27,8 +28,15 @@ class MyApp extends StatelessWidget {
         cursorColor: styles.requestBlue,
       ),
       initialRoute: '/',
-      onGenerateRoute: (settings) =>
-          CupertinoPageRoute(builder: (context) => routes[settings.name](context)),
+      onGenerateRoute: (settings) {
+        final page = routes[settings.name](context);
+
+        if (page != null) {
+          return CupertinoPageRoute(builder: (context) => routes[settings.name](context));
+        } else {
+          return null;
+        }
+      },
     );
   }
 }

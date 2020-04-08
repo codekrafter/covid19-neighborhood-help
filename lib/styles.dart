@@ -18,6 +18,8 @@ Color get backgroundWhite => Color(0xFFECEEF3);
 
 Color get inputBorderColor => Color(0xFFDDDDDD);
 
+Color get urgentColor => Color(0xFFFF9F33);
+
 TextStyle get introTextStyle => TextStyle(
   color: darkTextColor,
   fontSize: 18.5
