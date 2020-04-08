@@ -44,8 +44,8 @@ platform :android do
             app: "1:161534165723:android:6c9bab3a728ff27a7dc2fe",
             #testers: "tester1@company.com, tester2@company.com",
             release_notes: "Test release notes",
-            firebase_cli_path: "C:\Users\codek\AppData\Roaming\npm\firebase"
-            apk_path: "%UserProfile%\Documents\codevid\neighborhood_help\build\app\outputs\apk\release\app-release.apk"
+            #firebase_cli_path: "C:\Users\codek\AppData\Roaming\npm\firebase"
+            apk_path: "..\build\app\outputs\apk\release\app-release.apk"
         )
 
       end
