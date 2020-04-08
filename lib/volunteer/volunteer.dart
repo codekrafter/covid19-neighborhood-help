@@ -4,11 +4,13 @@ import 'package:geohash/geohash.dart';
 import 'package:provider/provider.dart';
 import 'package:neighborhood_help/styles.dart' as styles;
 import 'package:google_maps_webservice/places.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 
 import 'intro.dart';
 import 'results.dart';
+import 'confirmation.dart';
 
 class VolunteerModel extends ChangeNotifier {
   VolunteerModel() {
@@ -40,6 +42,8 @@ class VolunteerModel extends ChangeNotifier {
 
   double _radius = 0;
   List<DocumentSnapshot> _requests = [];
+  DocumentSnapshot _currentRequest;
+  bool _confirmed = false;
 
   double getRadius() => _radius;
 
@@ -59,12 +63,29 @@ class VolunteerModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  DocumentSnapshot getCurrentRequest() => _currentRequest;
+
+  void setCurrentRequest(DocumentSnapshot newValue) {
+    _currentRequest = newValue;
+
+    notifyListeners();
+  }
+
+  bool getConfirmed() => _confirmed;
+
+  void setConfirmed(bool newValue) {
+    _confirmed = newValue;
+
+    notifyListeners();
+  }
+
   Widget _currentPart = _partsMap[0];
   int _currentPartIndex = 0;
 
   static const List<Widget> _partsMap = [
     VolunteerIntro(),
     VolunteerResults(),
+    VolunteerConfirmation(),
   ];
 
   Widget getCurrentPart() {
@@ -89,7 +110,7 @@ class VolunteerModel extends ChangeNotifier {
     _setCurrentPart(_partsMap[_currentPartIndex]);
   }
 
-  void refreshRequests() async {
+  Future<void> refreshRequests() async {
     if (this.location == null || this.location.isEmpty) return;
     setRequests([]); // Trigger loading
     print('request refresh triggered');
@@ -105,10 +126,83 @@ class VolunteerModel extends ChangeNotifier {
 
     final snapshot =
         await queryDocumentsInRange(lat: location.lat, lng: location.lng, radius: getRadius());
-    print(snapshot.documents.length);
     setRequests(snapshot.documents);
 
     //notifyListeners();
+  }
+
+  Future<void> selectRequest(DocumentSnapshot doc) async {
+    if (_currentPartIndex != 1) return; // Can only select requests on the results page
+
+    setCurrentRequest(doc);
+
+    nextPart();
+  }
+
+  String getContactMethod() {
+    if (_currentPartIndex != 2) return 'Error';
+
+    final data = getCurrentRequest().data;
+
+    if (data['email'] != null) {
+      return data['email'];
+    } else if (data['phone'] != null) {
+      return '${data['phone']}';
+    } else {
+      return 'No contact method found';
+    }
+  }
+
+  String getContactVerb() {
+    if (_currentPartIndex != 2) return 'Error';
+
+    final data = getCurrentRequest().data;
+
+    if (data['email'] != null) {
+      return 'Email';
+    } else if (data['phone'] != null) {
+      return 'Call';
+    } else {
+      return 'Contact';
+    }
+  }
+
+  IconData getContactIcon() {
+    if (_currentPartIndex != 2) return null;
+
+    final data = getCurrentRequest().data;
+
+    if (data['email'] != null) {
+      return Icons.email;
+    } else if (data['phone'] != null) {
+      return Icons.phone;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> initiateContact(BuildContext context) async {
+    if (_currentPartIndex != 2) return;
+
+    final data = getCurrentRequest().data;
+
+    if (data['email'] != null) {
+      if (await canLaunch('mailto:${data['email']}')) {
+        launch('mailto:${data['email']}');
+      } else {
+        Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to launch mail app, please open it manually')));
+      }
+    } else if (data['phone'] != null) {
+      if (await canLaunch('tel:${data['phone']}')) {
+        launch('tel:${data['phone']}');
+      } else {
+        Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to launch phone app, please open it manually')));
+      }
+    } else {
+      ;
+    }
   }
 
   // Query Helpers
@@ -128,9 +222,6 @@ class VolunteerModel extends ChangeNotifier {
 
     final lowerHash = Geohash.encode(lowerLat, lowerLng);
     final upperHash = Geohash.encode(upperLat, upperLng);
-
-    print('lower: $lowerHash');
-    print('upper: $upperHash');
 
     if (collection == null) collection = Firestore.instance.collection('requests');
 

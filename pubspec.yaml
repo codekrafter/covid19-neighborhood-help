@@ -32,6 +32,7 @@ dependencies:
   uuid: ^2.0.4
   flutter_i18n: any
   geohash: any
+  url_launcher: any
 
   firebase_auth: any
   cloud_firestore: any

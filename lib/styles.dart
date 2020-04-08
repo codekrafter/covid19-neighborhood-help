@@ -75,3 +75,8 @@ TextStyle get contactFeatureStyle => TextStyle(
   fontWeight: FontWeight.w800,
   fontSize: 16
 );
+
+TextStyle get resultsCountStyle => TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 13
+);

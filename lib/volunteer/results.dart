@@ -110,9 +110,8 @@ class _VolunteerResultsState extends State<VolunteerResults> {
                                     onChanged: (val) {
                                       model.location = val;
 
-                                      if(model.location != null && model.location.isNotEmpty)
-                                      {
-                                        if(model.getRadius() == 0) model.setRadius(10);
+                                      if (model.location != null && model.location.isNotEmpty) {
+                                        if (model.getRadius() == 0) model.setRadius(10);
 
                                         model.refreshRequests();
                                       }
@@ -146,7 +145,22 @@ class _VolunteerResultsState extends State<VolunteerResults> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
+                                  if (model.getRequests().length > 0)
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 5),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        //mainAxisAlignment: MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            '${model.getRequests().length} requests found, sorted by proximity below:',
+                                            style: styles.resultsCountStyle,
+                                          ),
+                                          SizedBox(height: 10)
+                                        ],
+                                      ),
+                                    ),
                                   Container(
                                     height: 350,
                                     width: 320,
@@ -167,8 +181,9 @@ class _VolunteerResultsState extends State<VolunteerResults> {
                                         : Scrollbar(
                                             child: ListView.separated(
                                               shrinkWrap: true,
-                                              itemCount: model.getRequests().length+1,
-                                              itemBuilder: (context, index) => (index == model.getRequests().length)
+                                              itemCount: model.getRequests().length + 1,
+                                              itemBuilder: (context, index) => (index ==
+                                                      model.getRequests().length)
                                                   ? Container()
                                                   : ListTile(
                                                       title: Row(
@@ -191,6 +206,8 @@ class _VolunteerResultsState extends State<VolunteerResults> {
                                                       ),
                                                       subtitle: Text(
                                                           '${model.getRequests()[index].data['message']}'),
+                                                      onTap: () => model.selectRequest(
+                                                          model.getRequests()[index]),
                                                     ),
                                               separatorBuilder: (context, index) => Divider(),
                                             ),

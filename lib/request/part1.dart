@@ -172,7 +172,7 @@ class _RequestPart1State extends State<RequestPart1> {
                                           },
                                         )
                                       : (model.getContactMethod() == "phone")
-                                          ? InternationalPhoneNumberInput.withCustomBorder(
+                                          ? /*InternationalPhoneNumberInput.withCustomBorder(
                                               onInputChanged: (number) {
                                                 if (model.getNumberController() != null)
                                                   model.numberFieldValue =
@@ -189,6 +189,11 @@ class _RequestPart1State extends State<RequestPart1> {
                                               initialCountry2LetterCode: 'US',
                                               selectorType: PhoneInputSelectorType.DIALOG,
                                               textFieldController: model.getNumberController(),
+                                            )*/
+                                          CustomTextField(
+                                              keyboardType: TextInputType.phone,
+                                              name: 'Your phone numbers',
+                                              placeholder: 'Please enter your phone number',
                                             )
                                           : Container(),
                                 ),
