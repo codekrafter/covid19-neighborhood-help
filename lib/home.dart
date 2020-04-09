@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'styles.dart' as styles;
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     checkUserStatus();
     precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
+    print(FlutterI18n.translate(context, 'requester.how_it_works.step_1.title'));
     return Scaffold(
       body: Stack(
         children: [
@@ -93,7 +95,7 @@ class _HomePageState extends State<HomePage> {
           await FirebaseAuth.instance.signOut();
           checkUserStatus();
         } else {
-          throw e;
+          //throw e;
         }
       }
     }

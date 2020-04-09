@@ -52,7 +52,7 @@ class RequestIntro extends StatelessWidget {
                         style: styles.titleStyle.copyWith(color: styles.darkTextColor)),
                     SizedBox(height: 25),
                     Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultrices convallis nulla, ut ullamcorper erat euismod quis.',
+                      'Do you need groceries? Food? Even someone just to pick up your mail? We\'ve got you covered! Provide a few details about you, a method of contact, your location (not shown to the volunteer) and a summary of your request, and we will match you with a nearby volunteer!',
                       textAlign: TextAlign.center,
                       style: styles.introTextStyle,
                     ),

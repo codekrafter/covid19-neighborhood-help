@@ -3,6 +3,7 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'styles.dart' as styles;
 
@@ -21,6 +22,7 @@ class CustomTextField extends StatefulWidget {
       this.initialValue,
       this.errorText,
       this.onChanged,
+      this.inputFormatters,
       Key key})
       : assert(placeholder != null),
         assert(isRequired != null),
@@ -37,6 +39,7 @@ class CustomTextField extends StatefulWidget {
   final String initialValue;
   final String errorText;
   final Function(String) onChanged;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -106,378 +109,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             },
             focusNode: _focus,
             controller: _controller,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class PhoneNumberField extends StatefulWidget {
-  PhoneNumberField({@required this.countryCode, this.onSelected, Key key})
-      : assert(countryCode != null),
-        super(key: key);
-
-  final Function(Country) onSelected;
-  final String countryCode;
-
-  @override
-  _PhoneNumberFieldState createState() => _PhoneNumberFieldState();
-}
-
-class _PhoneNumberFieldState extends State<PhoneNumberField> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        RichText(
-          text: TextSpan(
-            text: 'Your phone number',
-            style: styles.textFieldNameStyle,
-            children: [
-              TextSpan(text: ' *', style: styles.requiredMarkStyle),
-            ],
-          ),
-        ),
-        SizedBox(height: 10),
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              OutlineButton(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flags.getMiniFlag(
-                        countryList
-                            .firstWhere((c) => c.phoneCode == "${widget.countryCode}")
-                            .isoCode,
-                        null,
-                        null),
-                    SizedBox(width: 10),
-                    Text(
-                      '+${widget.countryCode}',
-                      style: TextStyle(fontWeight: FontWeight.normal),
-                    ),
-                    SizedBox(width: 5),
-                    SizedBox(
-                      width: 15,
-                      child: Icon(
-                        Icons.expand_more,
-                        color: styles.requestBlue,
-                        size: 25,
-                      ),
-                    ),
-                  ],
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => Theme(
-                      data: Theme.of(context).copyWith(primaryColor: Colors.pink),
-                      child: CountryPickerDialog(
-                        titlePadding: EdgeInsets.all(8.0),
-                        searchCursorColor: Colors.pinkAccent,
-                        searchInputDecoration: InputDecoration(hintText: 'Search...'),
-                        isSearchable: true,
-                        title: Text('Select your phone code'),
-                        onValuePicked:
-                            (widget.onSelected != null) ? widget.onSelected : (country) {},
-                        itemFilter: (c) => [
-                          'AD',
-                          'AE',
-                          'AF',
-                          'AG',
-                          'AI',
-                          'AL',
-                          'AM',
-                          'AO',
-                          'AR',
-                          'AS',
-                          'AT',
-                          'AU',
-                          'AW',
-                          'AX',
-                          'AZ',
-                          'BA',
-                          'BB',
-                          'BD',
-                          'BE',
-                          'BF',
-                          'BG',
-                          'BH',
-                          'BI',
-                          'BJ',
-                          'BL',
-                          'BM',
-                          'BN',
-                          'BO',
-                          'BR',
-                          'BS',
-                          'BT',
-                          'BV',
-                          'BW',
-                          'BY',
-                          'BZ',
-                          'CA',
-                          'CC',
-                          'CD',
-                          'CF',
-                          'CG',
-                          'CH',
-                          'CI',
-                          'CK',
-                          'CL',
-                          'CM',
-                          'CN',
-                          'CO',
-                          'CR',
-                          'CU',
-                          'CV',
-                          'CW',
-                          'CX',
-                          'CY',
-                          'CZ',
-                          'DE',
-                          'DJ',
-                          'DK',
-                          'DM',
-                          'DO',
-                          'DZ',
-                          'EC',
-                          'EE',
-                          'EG',
-                          'ER',
-                          'ES',
-                          'ET',
-                          'EU',
-                          'FI',
-                          'FJ',
-                          'FK',
-                          'FM',
-                          'FO',
-                          'FR',
-                          'GA',
-                          'GB',
-                          'GB-ENG',
-                          'GB-NIR',
-                          'GB-SCT',
-                          'GB-WLS',
-                          'GB-ZET',
-                          'GD',
-                          'GE',
-                          'GF',
-                          'GG',
-                          'GH',
-                          'GI',
-                          'GL',
-                          'GM',
-                          'GN',
-                          'GP',
-                          'GQ',
-                          'GR',
-                          'GS',
-                          'GT',
-                          'GU',
-                          'GW',
-                          'GY',
-                          'HK',
-                          'HM',
-                          'HN',
-                          'HR',
-                          'HT',
-                          'HU',
-                          'ID',
-                          'IE',
-                          'IL',
-                          'IM',
-                          'IN',
-                          'IO',
-                          'IQ',
-                          'IR',
-                          'IS',
-                          'IT',
-                          'JE',
-                          'JM',
-                          'JO',
-                          'JP',
-                          'KE',
-                          'KG',
-                          'KH',
-                          'KI',
-                          'KM',
-                          'KN',
-                          'KP',
-                          'KR',
-                          'KW',
-                          'KY',
-                          'KZ',
-                          'LA',
-                          'LB',
-                          'LC',
-                          'LGBT',
-                          'LI',
-                          'LK',
-                          'LR',
-                          'LS',
-                          'LT',
-                          'LU',
-                          'LV',
-                          'LY',
-                          'MA',
-                          'MC',
-                          'MD',
-                          'ME',
-                          'MF',
-                          'MG',
-                          'MH',
-                          'MK',
-                          'ML',
-                          'MM',
-                          'MN',
-                          'MO',
-                          'MP',
-                          'MQ',
-                          'MR',
-                          'MS',
-                          'MT',
-                          'MU',
-                          'MV',
-                          'MW',
-                          'MX',
-                          'MY',
-                          'MZ',
-                          'NA',
-                          'NC',
-                          'NE',
-                          'NF',
-                          'NG',
-                          'NI',
-                          'NL',
-                          'NO',
-                          'NP',
-                          'NR',
-                          'NU',
-                          'NZ',
-                          'OM',
-                          'PA',
-                          'PE',
-                          'PF',
-                          'PG',
-                          'PH',
-                          'PK',
-                          'PL',
-                          'PM',
-                          'PN',
-                          'PR',
-                          'PS',
-                          'PT',
-                          'PW',
-                          'PY',
-                          'QA',
-                          'RE',
-                          'RO',
-                          'RS',
-                          'RU',
-                          'RW',
-                          'SA',
-                          'SB',
-                          'SC',
-                          'SD',
-                          'SE',
-                          'SG',
-                          'SH',
-                          'SI',
-                          'SJ',
-                          'SK',
-                          'SL',
-                          'SM',
-                          'SN',
-                          'SO',
-                          'SR',
-                          'SS',
-                          'ST',
-                          'SV',
-                          'SX',
-                          'SY',
-                          'SZ',
-                          'TC',
-                          'TD',
-                          'TF',
-                          'TG',
-                          'TH',
-                          'TJ',
-                          'TK',
-                          'TL',
-                          'TM',
-                          'TN',
-                          'TO',
-                          'TR',
-                          'TT',
-                          'TV',
-                          'TW',
-                          'TZ',
-                          'UA',
-                          'UG',
-                          'UM',
-                          'US',
-                          'US-CA',
-                          'UY',
-                          'UZ',
-                          'VA',
-                          'VC',
-                          'VE',
-                          'VG',
-                          'VI',
-                          'VN',
-                          'VU',
-                          'WF',
-                          'WS',
-                          'XK',
-                          'YE',
-                          'YT',
-                          'ZA',
-                          'ZM',
-                          'ZW'
-                        ].contains(c.isoCode),
-                        priorityList: [
-                          CountryPickerUtils.getCountryByIsoCode('TR'),
-                          CountryPickerUtils.getCountryByIsoCode('US'),
-                        ],
-                        itemBuilder: (country) => ListTile(
-                          leading: Flags.getMiniFlag(country.isoCode.toUpperCase(), null, null),
-                          title: Text(country.name),
-                          trailing: Text('+${country.phoneCode}'),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(width: 15),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    border:
-                        OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor)),
-                    enabledBorder:
-                        OutlineInputBorder(borderSide: BorderSide(color: styles.inputBorderColor)),
-                    focusedBorder:
-                        OutlineInputBorder(borderSide: BorderSide(color: styles.requestBlue)),
-                    hintText: '',
-                    hintStyle: TextStyle(color: styles.inputBorderColor),
-                    contentPadding: EdgeInsets.fromLTRB(15, 2, 3, 2),
-                  ),
-                  cursorColor: styles.requestBlue,
-                  keyboardType: TextInputType.phone,
-                  onChanged: (val) => null,
-                  onEditingComplete: () => null,
-                  //focusNode: _focus,
-                  //controller: _controller,
-                ),
-              ),
-            ],
+            inputFormatters: widget.inputFormatters,
           ),
         ),
       ],
@@ -548,6 +180,46 @@ class CheckboxRow extends StatelessWidget {
           onTap: () => (onChanged != null) ? onChanged(!value) : null,
         ),
       ],
+    );
+  }
+}
+
+class PhoneNumberTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue
+  ) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    final StringBuffer newText = StringBuffer();
+    if (newTextLength >= 1) {
+      newText.write('(');
+      if (newValue.selection.end >= 1)
+        selectionIndex++;
+    }
+    if (newTextLength >= 4) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 3) + ') ');
+      if (newValue.selection.end >= 3)
+        selectionIndex += 2;
+    }
+    if (newTextLength >= 7) {
+      newText.write(newValue.text.substring(3, usedSubstringIndex = 6) + '-');
+      if (newValue.selection.end >= 6)
+        selectionIndex++;
+    }
+    if (newTextLength >= 11) {
+      newText.write(newValue.text.substring(6, usedSubstringIndex = 10) + ' ');
+      if (newValue.selection.end >= 10)
+        selectionIndex++;
+    }
+    // Dump the rest.
+    if (newTextLength >= usedSubstringIndex)
+      newText.write(newValue.text.substring(usedSubstringIndex));
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: selectionIndex),
     );
   }
 }

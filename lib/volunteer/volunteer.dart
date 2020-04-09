@@ -7,6 +7,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:neighborhood_help/widgets.dart';
 
 import 'intro.dart';
 import 'results.dart';
@@ -147,7 +148,9 @@ class VolunteerModel extends ChangeNotifier {
     if (data['email'] != null) {
       return data['email'];
     } else if (data['phone'] != null) {
-      return '${data['phone']}';
+      return PhoneNumberTextInputFormatter()
+          .formatEditUpdate(null, TextEditingValue(text: '${data['phone']}'))
+          .text;
     } else {
       return 'No contact method found';
     }

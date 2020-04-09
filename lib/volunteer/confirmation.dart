@@ -126,7 +126,7 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
                                                 'Reach out via',
                                                 style: styles.postTitleStyle,
                                               ),
-                                              SizedBox(height: 10),
+                                              SizedBox(height: 15),
                                               Padding(
                                                 padding: const EdgeInsets.symmetric(horizontal: 5),
                                                 child: Text(
@@ -134,7 +134,7 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
                                                   style: styles.postBodyStyle,
                                                 ),
                                               ),
-                                              SizedBox(height: 10),
+                                              SizedBox(height: 15),
                                               RaisedButton(
                                                 onPressed: () => model.initiateContact(context),
                                                 child: Row(

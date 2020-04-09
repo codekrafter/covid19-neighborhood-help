@@ -9,14 +9,35 @@ import 'package:intl_phone_number_input/src/utils/formatter/as_you_type_formatte
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'dart:io' show Platform;
+import 'package:neighborhood_help/intro.dart';
+import 'package:neighborhood_help/widgets.dart';
 
-import 'intro.dart';
 import 'part1.dart';
 import 'part2.dart';
 import 'part3.dart';
 
 class RequestModel extends ChangeNotifier {
   RequestModel() {
+    _partsMap = [
+      IntroSection(
+        key: UniqueKey(),
+        titleText: 'Send a request',
+        bodyText:
+            'Do you need groceries? Food? Even someone just to pick up your mail? We\'ve got you covered!',
+        onButtonTapped: () => this.nextPart(),
+      ),
+      IntroSection(
+        key: UniqueKey(),
+        titleText: 'Send a request',
+        bodyText:
+            'Provide a few details about you, a method of contact, your location, and a summary of your request, and we will match you with a nearby volunteer!',
+        onButtonTapped: () => this.nextPart(),
+        onBackButtonTapped: () => this.previousPart(),
+      ),
+      RequestPart1(),
+      RequestPart2(),
+      RequestPart3(),
+    ];
     _initApi();
 
     resetToDefaults();
@@ -43,8 +64,8 @@ class RequestModel extends ChangeNotifier {
     final currentUser = await FirebaseAuth.instance.currentUser();
     final defaultsSnapshot =
         await Firestore.instance.collection("users").document(currentUser.uid).get();
-    final data = defaultsSnapshot.data;
-    print(data);
+    final data = defaultsSnapshot.data ?? {};
+    
     _contactMethod = data['contact_method'] ?? '';
     //_countryCode = data['country_code'] ?? '1';
     name = data['name'] ?? null;
@@ -75,7 +96,10 @@ class RequestModel extends ChangeNotifier {
         'phone': phone
     };
 
-    await Firestore.instance.collection("users").document(currentUser.uid).setData(data, merge: true);
+    await Firestore.instance
+        .collection("users")
+        .document(currentUser.uid)
+        .setData(data, merge: true);
   }
 
   void validateSessionToken() {
@@ -86,8 +110,8 @@ class RequestModel extends ChangeNotifier {
     print(sessionToken);
   }
 
-  Widget _currentPart = _partsMap[0];
   int _currentPartIndex = 0;
+  Widget get _currentPart => _partsMap[_currentPartIndex];
 
   String apiKey;
   GoogleMapsPlaces _places;
@@ -136,7 +160,7 @@ class RequestModel extends ChangeNotifier {
 
   String getContactDetails() {
     if (_contactMethod == "phone") {
-      return "$phone";
+      return PhoneNumberTextInputFormatter().formatEditUpdate(null, TextEditingValue(text: '$phone')).text;
     } else {
       return email;
     }
@@ -191,25 +215,20 @@ class RequestModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const List<Widget> _partsMap = [
-    RequestIntro(),
-    RequestPart1(),
-    RequestPart2(),
-    RequestPart3(),
-  ];
+  List<Widget> _partsMap;
 
-  Widget getCurrentPart() => _currentPart;
+  Widget getCurrentPart() => _partsMap[_currentPartIndex];
 
-  void _setCurrentPart(Widget newPart) {
-    _currentPart = newPart;
+  /*void _setCurrentPart(Widget newPart) {
+    //_currentPart = newPart;
 
     notifyListeners();
-  }
+  }*/
 
   void nextPart() {
     _currentPartIndex++;
 
-    _setCurrentPart(_partsMap[_currentPartIndex]);
+    //_setCurrentPart(_partsMap[_currentPartIndex]);
     if (_currentPartIndex == 2) {
       // If moving away from part 1, remove the reference to the number text controller
       _numberController = null;
@@ -217,15 +236,19 @@ class RequestModel extends ChangeNotifier {
       // If moving to part 2 make sure we have a valid session token
       validateSessionToken();
     }
+
+    notifyListeners();
   }
 
   void previousPart() {
     _currentPartIndex--;
 
-    _setCurrentPart(_partsMap[_currentPartIndex]);
+    //_setCurrentPart(_partsMap[_currentPartIndex]);
     if (_currentPartIndex == 0)
       _numberController =
           null; // If moving away from part 1, remove the reference to the number text controller
+
+    notifyListeners();
   }
 }
 
@@ -245,16 +268,10 @@ class _RequestPageState extends State<RequestPage> {
         child: ChangeNotifierProvider<RequestModel>(
           create: (context) => RequestModel(),
           child: Builder(
-            builder: (context) => AnimatedSwitcher(
+            builder: (context) => /*AnimatedSwitcher(
               duration: Duration(milliseconds: 400),
-              /*transitionBuilder: (child, animation) => SlideTransition(
-                position: animation.drive(
-                  Tween(begin: Offset(1, 0), end: Offset.zero),
-                ),
-                child: child,
-              ),*/
-              child: Provider.of<RequestModel>(context).getCurrentPart(),
-            ),
+              child: */Provider.of<RequestModel>(context).getCurrentPart(),
+            //),
           ),
         ),
       ),

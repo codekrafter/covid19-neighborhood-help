@@ -1,7 +1,9 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:geohash/geohash.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'request/request.dart';
 import 'volunteer/volunteer.dart';
@@ -27,6 +29,15 @@ class MyApp extends StatelessWidget {
         accentColor: styles.requestBlue,
         cursorColor: styles.requestBlue,
       ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FlutterI18nDelegate(
+          translationLoader: NetworkFileTranslationLoader(
+            baseUri: Uri.https("neighbourhood-help.web.app", "/locales/"),
+          ),
+        )
+      ],
       initialRoute: '/',
       onGenerateRoute: (settings) {
         final page = routes[settings.name](context);

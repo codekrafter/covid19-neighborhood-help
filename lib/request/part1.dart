@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -191,9 +192,34 @@ class _RequestPart1State extends State<RequestPart1> {
                                               textFieldController: model.getNumberController(),
                                             )*/
                                           CustomTextField(
+                                              name: null,
+                                              placeholder: "Your phone number",
+                                              errorText: model.getContactMethodErrorText(),
+                                              initialValue:
+                                                  (model.phone != null) ? '${model.phone}' : null,
                                               keyboardType: TextInputType.phone,
-                                              name: 'Your phone numbers',
-                                              placeholder: 'Please enter your phone number',
+                                              onChanged: (val) {
+                                                final plainVal = int.tryParse(val
+                                                    .replaceAll('(', '')
+                                                    .replaceAll(')', '')
+                                                    .replaceAll(' ', '')
+                                                    .replaceAll('-', ''));
+                                                if (val == null || val.isEmpty) {
+                                                  model.setContactMethodErrorText(
+                                                      "Please enter an phone number");
+                                                } else if ('$plainVal'.length != 10) {
+                                                  model.setContactMethodErrorText(
+                                                      'Please enter a valid phone number');
+                                                } else {
+                                                  model.setContactMethodErrorText(null);
+                                                  model.phone = plainVal;
+                                                }
+                                              },
+                                              inputFormatters: [
+                                                WhitelistingTextInputFormatter.digitsOnly,
+                                                //LengthLimitingTextInputFormatter(10),
+                                                PhoneNumberTextInputFormatter()
+                                              ],
                                             )
                                           : Container(),
                                 ),
