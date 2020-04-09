@@ -94,7 +94,7 @@ class VolunteerModel extends ChangeNotifier {
 
   void _setCurrentPart(Widget newPart) {
     _currentPart = newPart;
-
+    _confirmed = false;
     notifyListeners();
   }
 

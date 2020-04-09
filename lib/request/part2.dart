@@ -149,7 +149,7 @@ class RequestPart2 extends StatelessWidget {
                               ),
                               SizedBox(height: 20),
                               CheckboxRow(
-                                label: 'As soon as possible',
+                                label: 'This request is urgent',
                                 value: model.getUrgent(),
                                 onChanged: (val) => model.setUrgent(val),
                               ),
