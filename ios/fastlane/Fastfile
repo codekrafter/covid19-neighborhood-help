@@ -22,6 +22,17 @@ platform :ios do
     match(type: "appstore", readonly: true, git_url: "git@github.com:codekrafter/match.git")
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight
+    #enable_automatic_code_signing(path: "Runner.xcodeproj")
+  end
+
+  desc "Push a new beta build to Firebase Distribution"
+  lane :firebase do
     disable_automatic_code_signing(path: "Runner.xcodeproj")
+    #match(type: "appstore", readonly: false, git_url: "git@github.com:codekrafter/match.git", clone_branch_directly: true)
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    firebase_app_distribution(
+      app: "1:161534165723:ios:1759531d0b1c5a8c7dc2fe"
+    )
+    #enable_automatic_code_signing(path: "Runner.xcodeproj")
   end
 end

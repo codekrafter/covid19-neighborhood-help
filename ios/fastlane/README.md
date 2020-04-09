@@ -21,6 +21,11 @@ or alternatively using `brew cask install fastlane`
 fastlane ios beta
 ```
 Push a new beta build to TestFlight
+### ios firebase
+```
+fastlane ios firebase
+```
+Push a new beta build to Firebase Distribution
 
 ----
 
