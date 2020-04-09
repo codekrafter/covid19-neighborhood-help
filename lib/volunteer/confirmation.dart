@@ -30,7 +30,8 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
         resizeToAvoidBottomInset: true,
         backgroundColor: styles.requestBlue,
         appBar: VolunteerAppBar(
-          title: 'Search',
+          getTitle: (model) => model.getConfirmed() ? model.getCurrentRequest().data['name'] : 'Search',
+          isDirectExit: (model) => model.getConfirmed(),
         ),
         body: ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
@@ -53,7 +54,7 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
 
                     return ListView(
                       //shrinkWrap: true,
-                      //physics: NeverScrollableScrollPhysics(),
+                      physics: ClampingScrollPhysics(),
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -68,7 +69,7 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
                                 height: 10
                               ),*/
                               Text(
-                                'Can you help ${model.getCurrentRequest().data['name']}?',
+                                (!model.getConfirmed()) ? 'Can you help ${model.getCurrentRequest().data['name']}?' : 'Please reach out to ${model.getCurrentRequest().data['name']}',
                                 style: styles.titleStyle,
                               ),
                             ],
@@ -129,7 +130,7 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
                                               SizedBox(height: 15),
                                               Padding(
                                                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                                                child: Text(
+                                                child: SelectableText(
                                                   model.getContactMethod(),
                                                   style: styles.postBodyStyle,
                                                 ),
@@ -148,6 +149,30 @@ class _VolunteerConfirmationState extends State<VolunteerConfirmation> {
                                                     ),
                                                     SizedBox(width: 10),
                                                     Text(model.getContactVerb(),
+                                                        style: styles.introNextStyle
+                                                            .copyWith(color: Colors.white)),
+                                                  ],
+                                                ),
+                                                color: styles.requestBlue,
+                                                elevation: 0,
+                                                padding: const EdgeInsets.all(16.0),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10)),
+                                              ),
+                                              SizedBox(height: 15),
+                                              if(model.canInitiateSecondaryContact()) RaisedButton(
+                                                onPressed: () => model.initiateContact(context, secondary: true),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.sms,
+                                                      size: 25,
+                                                      color: Colors.white,
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text('Text',
                                                         style: styles.introNextStyle
                                                             .copyWith(color: Colors.white)),
                                                   ],

@@ -184,12 +184,13 @@ class VolunteerModel extends ChangeNotifier {
     }
   }
 
-  Future<void> initiateContact(BuildContext context) async {
+  Future<void> initiateContact(BuildContext context, {bool secondary = false}) async {
     if (_currentPartIndex != 2) return;
 
     final data = getCurrentRequest().data;
 
     if (data['email'] != null) {
+      if (secondary) return; // Secondary mail action not possible (this should never even execute)
       if (await canLaunch('mailto:${data['email']}')) {
         launch('mailto:${data['email']}');
       } else {
@@ -197,8 +198,9 @@ class VolunteerModel extends ChangeNotifier {
             SnackBar(content: Text('Failed to launch mail app, please open it manually')));
       }
     } else if (data['phone'] != null) {
-      if (await canLaunch('tel:${data['phone']}')) {
-        launch('tel:${data['phone']}');
+      final actionUri = (secondary) ? 'sms:${data['phone']}' : 'tel:${data['phone']}';
+      if (await canLaunch(actionUri)) {
+        launch(actionUri);
       } else {
         Scaffold.of(context).showSnackBar(
             SnackBar(content: Text('Failed to launch phone app, please open it manually')));
@@ -206,6 +208,12 @@ class VolunteerModel extends ChangeNotifier {
     } else {
       ;
     }
+  }
+
+  bool canInitiateSecondaryContact() {
+    final data = getCurrentRequest().data;
+
+    return data['email'] == null && data['phone'] != null;
   }
 
   // Query Helpers
@@ -272,11 +280,17 @@ class _VolunteerPageState extends State<VolunteerPage> {
 }
 
 class VolunteerAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const VolunteerAppBar({@required this.title, Key key})
-      : assert(title != null),
+  const VolunteerAppBar({this.title, this.getTitle, this.isDirectExit = _defaultFalse, Key key})
+      : assert(title != null || getTitle != null),
+        assert(isDirectExit != null),
         super(key: key);
 
   final String title;
+  final Function(VolunteerModel) getTitle;
+  // Determines if there should be a back button or a close button
+  final Function(VolunteerModel) isDirectExit;
+
+  static _defaultFalse(model) => false;
 
   @override
   Widget build(BuildContext context) {
@@ -289,14 +303,14 @@ class VolunteerAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(children: [
               IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
+                  (isDirectExit(model)) ? Icons.close : Icons.arrow_back,
                   color: Colors.white,
                   size: 23,
                 ),
-                onPressed: () => model.previousPart(),
+                onPressed: () => (isDirectExit(model)) ? Navigator.pop(context) : model.previousPart(),
               ),
               Text(
-                title,
+                (title != null) ? title : getTitle(model),
                 style: styles.stepHeaderStyle,
               )
             ]),

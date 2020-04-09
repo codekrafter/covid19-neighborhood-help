@@ -30,7 +30,7 @@ class _VolunteerResultsState extends State<VolunteerResults> {
         resizeToAvoidBottomInset: true,
         backgroundColor: styles.requestBlue,
         appBar: VolunteerAppBar(
-          title: 'Search',
+          title: 'Intro',
         ),
         body: ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
