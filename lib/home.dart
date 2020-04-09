@@ -26,59 +26,65 @@ class _HomePageState extends State<HomePage> {
     checkUserStatus();
     precacheImage(AssetImage('assets/how_it_works_placeholder.png'), context);
     print(FlutterI18n.translate(context, 'requester.how_it_works.step_1.title'));
-    return Scaffold(
-      body: Stack(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: SvgPicture.asset('assets/home/background.svg', fit: BoxFit.fill),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Logo',
-                    style: styles.stepHeaderStyle,
-                  ),
-                  LanguageSelect()
-                ],
+    return AnnotatedRegion(
+      value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: SvgPicture.asset('assets/home/background.svg', fit: BoxFit.fill),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Logo',
+                      style: styles.stepHeaderStyle,
+                    ),
+                    LanguageSelect()
+                  ],
+                ),
               ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Connecting those affected by COVID-19', style: styles.subtitleStyle),
-                Text(
-                  'What would you like to do?',
-                  style: styles.titleStyle,
-                ),
-                SizedBox(height: 30),
-                HomeSelection(
-                  message: 'I need help',
-                  image: SvgPicture.asset('assets/home/requester.svg'),
-                  imagePos: EdgeInsets.fromLTRB(14.9, null, null, 8),
-                  onTap: () => Navigator.of(context).pushNamed('/request'),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                HomeSelection(
-                  message: 'I want to help',
-                  image: SvgPicture.asset('assets/home/volunteer.svg'),
-                  imagePos: EdgeInsets.fromLTRB(14.9, null, null, 17),
-                  onTap: () => Navigator.of(context).pushNamed('/volunteer'),
-                ),
-              ],
-            ),
-          )
-        ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Connecting those affected by COVID-19', style: styles.subtitleStyle),
+                  Text(
+                    'What would you like to do?',
+                    style: styles.titleStyle,
+                  ),
+                  SizedBox(height: 30),
+                  HomeSelection(
+                    message: 'I need help',
+                    image: SvgPicture.asset('assets/home/requester.svg'),
+                    imagePos: EdgeInsets.fromLTRB(14.9, null, null, 8),
+                    onTap: () => Navigator.of(context).pushNamed('/request'),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  HomeSelection(
+                    message: 'I want to help',
+                    image: SvgPicture.asset('assets/home/volunteer.svg'),
+                    imagePos: EdgeInsets.fromLTRB(14.9, null, null, 17),
+                    onTap: () => Navigator.of(context).pushNamed('/volunteer'),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
